@@ -6,7 +6,7 @@ function validate(oldPass,newPass,renewPass) {
     return {
       old: oldPass.length===0,
       new: newPass.length<8,
-      renew: renewPass != newPass
+      renew: renewPass !== newPass
     };
 }
 

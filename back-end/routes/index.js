@@ -6,9 +6,6 @@ const ctrl_resetPassword = require("../controller/resetPassword.js");
 
 const router = express.Router();
 
-
-
-
 router
     .route("/login")
     .post(ctrl_login.loginpost);
@@ -28,5 +25,9 @@ router
 router
     .route("/passwordreset")
     .post(ctrl_resetPassword.resetPassword);
+
+router
+    .route("/mailcheck")
+    .get(ctrl_registerUser.checkEmail);
 
 module.exports = router;

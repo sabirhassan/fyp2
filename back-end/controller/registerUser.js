@@ -85,7 +85,7 @@ function insertRecord(req, res) {
 
 module.exports.checkEmail = function (req, res) {  //ADDED BY SALLAHUDDIN
     console.log("YEEEEEEEHAW")
-    var mail = req.query.email;
+    var mail = req.params.email;
 
     let userRef = db.collection('user');
     let query = userRef.where('email', '==', mail).get()

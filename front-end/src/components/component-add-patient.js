@@ -1,32 +1,13 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-
-function ValidateEmail(mail) 
+function ValidateEmail(contact) 
 {
-    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    if(mail.match(mailformat))
+//    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    var phoneno = /^\+?([0-9]{12})\)?$/;
+    if(contact.match(phoneno))
     {
-        
-     /*   const user= {
-            email:mail
-        }
-        console.log(mail);
-        
-        axios.get('http://localhost:4000/mailcheck',{ params: {email: mail}})
-            .then(res => {
-                console.log(res.data.EmailNameInUse);
-                if(res.data.EmailNameInUse == true)
-                {
-                    console.log("email in use");
-                }
-                else
-                {
-                    console.log("email not in use");
-                }
-            });
-       */     
-        return false;
+    return false;
     }
     else
     {
@@ -34,40 +15,38 @@ function ValidateEmail(mail)
     }
 }
 
-function validate(firstName,lastName,email, password) {
+function validate(firstName,lastName,contact, password) {
     // true means invalid, so our conditions got reversed
     return {
       firstName: firstName.length===0,
       lastName: lastName.length===0,
-      email: ValidateEmail(email),
+      contact: ValidateEmail(contact),
       password: password.length < 8
     };
 }
 
-export default class Register extends Component {
-
+export default class AddPatient extends Component {
+    
     constructor(props) {
         super(props);
 
         this.state = {
             firstName: '',
             lastName: '',
-            email: '',
+            contact: '',
             password: '',
-            userType: 'doctor',
-
+            
             touched: {
                 firstName: false,
                 lastName: false,
-                email: false,
+                contact: false,
                 password: false,
               }
         }
         this.onChangefirstName = this.onChangefirstName.bind(this);
         this.onChangelastName = this.onChangelastName.bind(this);
-        this.onChangeemail = this.onChangeemail.bind(this);
+        this.onChangeemail = this.onChangecontact.bind(this);
         this.onChangepassword = this.onChangepassword.bind(this);
-        this.onChangeuserType = this.onChangeuserType.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
     
@@ -83,9 +62,9 @@ export default class Register extends Component {
         });
     }
 
-    onChangeemail(e) {
+    onChangecontact(e) {
         this.setState({
-            email: e.target.value
+            contact: e.target.value
         });
     }
 
@@ -95,11 +74,6 @@ export default class Register extends Component {
         });
     }
 
-    onChangeuserType(e) {
-        this.setState({
-            userType: e.target.value
-        });
-    }
 
     onSubmit(e) {
         e.preventDefault();
@@ -107,20 +81,18 @@ export default class Register extends Component {
         console.log(`Form submitted:`);
         console.log(`firstName: ${this.state.firstName}`);
         console.log(`lastName: ${this.state.lastName}`);
-        console.log(`Email: ${this.state.email}`);
+        console.log(`Email: ${this.state.contact}`);
         console.log(`Password: ${this.state.password}`);
-        console.log(`userType: ${this.state.userType}`);
 
         const user= {
             firstName:this.state.firstName,
             lastName:this.state.lastName,
-            email:this.state.email,
+            email:this.state.contact,
             password:this.state.password,
-            userType:this.state.userType
         }
 
         console.log(user)
-        
+/*        
         axios.post('http://localhost:4000/register', user)
             .then(res => {
                 console.log(res.data);
@@ -133,13 +105,13 @@ export default class Register extends Component {
                     alert(res.data);
                 }
             });
-
+*/
         this.setState({
             firstName:'',
             lastName:'',
-            email: '',
+            contact: '',
             password: '',
-            userTpye:'doctor'
+            
         });
     }
 
@@ -151,10 +123,8 @@ export default class Register extends Component {
         });
       }
 
-
-
     render() {
-        const errors = validate(this.state.firstName,this.state.lastName,this.state.email, this.state.password);
+        const errors = validate(this.state.firstName,this.state.lastName,this.state.contact, this.state.password);
         const isDisabled = Object.keys(errors).some(x => errors[x]);
 
         const shouldMarkError = field => {
@@ -199,17 +169,17 @@ export default class Register extends Component {
                     </div>
                     
                     <div className="form-group">
-                    <label>Email: </label>
+                    <label>Contact: </label>
                     <input 
                             type="text" 
-                            className={shouldMarkError("email") ? "form-control is-invalid" : "form-control"}
-                            value={this.state.email}
+                            className={shouldMarkError("contact") ? "form-control is-invalid" : "form-control"}
+                            value={this.state.contact}
                             onChange={this.onChangeemail}
-                            onBlur={this.handleBlur("email")}
+                            onBlur={this.handleBlur("contact")}
                             />
-                            {shouldMarkError("email") ?
+                            {shouldMarkError("contact") ?
                                 <div className="invalid-feedback">
-                                    Please provide a valid email.
+                                    Please provide a valid contact like +921112223456.
                                 </div>
                             :""}
                     </div>
@@ -230,16 +200,6 @@ export default class Register extends Component {
                                 :""}
                     </div>
 
-                    <div>
-                    <label >Choose a userType:</label>
-                        <select value={this.state.userTpye} onChange={this.onChangeuserType}>
-                        <option value="doctor">Doctor</option>
-                        <option value="doctor assistant">Doctor Assistant</option>
-                        <option value="lab staff">Lab Staff</option>
-                        <option value="admin">Admin</option>
-                        </select>
-                        
-                  </div>
                     <div className="form-group">
                         <input type="submit" disabled={isDisabled} value="Create User" className="btn btn-primary" />
                     </div>
