@@ -8,7 +8,7 @@ function ValidateEmail(mail)
     if(mail.match(mailformat))
     {
         
-     /*   const user= {
+        const user= {
             email:mail
         }
         console.log(mail);
@@ -25,7 +25,7 @@ function ValidateEmail(mail)
                     console.log("email not in use");
                 }
             });
-       */     
+            
         return false;
     }
     else
@@ -139,7 +139,14 @@ export default class Register extends Component {
             lastName:'',
             email: '',
             password: '',
-            userTpye:'doctor'
+            userTpye:'doctor',
+
+            touched: {
+                firstName: false,
+                lastName: false,
+                email: false,
+                password: false,
+              }
         });
     }
 

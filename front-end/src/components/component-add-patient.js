@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import DatePicker from 'react-date-picker';
 
-function ValidateEmail(contact) 
+function Validatephone(contact) 
 {
 //    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     var phoneno = /^\+?([0-9]{12})\)?$/;
@@ -15,12 +16,11 @@ function ValidateEmail(contact)
     }
 }
 
-function validate(firstName,lastName,contact, password) {
+function validate(name,contact, password) {
     // true means invalid, so our conditions got reversed
     return {
-      firstName: firstName.length===0,
-      lastName: lastName.length===0,
-      contact: ValidateEmail(contact),
+      name: name.length===0,
+      contact: Validatephone(contact),
       password: password.length < 8
     };
 }
@@ -31,36 +31,35 @@ export default class AddPatient extends Component {
         super(props);
 
         this.state = {
-            firstName: '',
-            lastName: '',
+            name: '',
             contact: '',
             password: '',
+            gender:'male',
+
+            dob:new Date(),
             
             touched: {
-                firstName: false,
-                lastName: false,
+                name: false,
                 contact: false,
                 password: false,
               }
         }
-        this.onChangefirstName = this.onChangefirstName.bind(this);
-        this.onChangelastName = this.onChangelastName.bind(this);
-        this.onChangeemail = this.onChangecontact.bind(this);
+        this.onChangename = this.onChangename.bind(this);
+        this.onChangecontact = this.onChangecontact.bind(this);
         this.onChangepassword = this.onChangepassword.bind(this);
+        this.onChangegender = this.onChangegender.bind(this);
+        this.onChangedob = this.onChangedob.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        
     }
     
-    onChangefirstName(e) {
+
+    onChangename(e) {
         this.setState({
-            firstName: e.target.value
+            name: e.target.value
         });
     }
 
-    onChangelastName(e) {
-        this.setState({
-            lastName: e.target.value
-        });
-    }
 
     onChangecontact(e) {
         this.setState({
@@ -74,44 +73,67 @@ export default class AddPatient extends Component {
         });
     }
 
+    onChangegender(e){
+        this.setState({
+            gender:e.target.value
+        });
+    }
+
+    onChangedob(e) {
+        this.setState({
+            dob:e 
+        });
+    }
+
+
 
     onSubmit(e) {
         e.preventDefault();
         
         console.log(`Form submitted:`);
-        console.log(`firstName: ${this.state.firstName}`);
-        console.log(`lastName: ${this.state.lastName}`);
-        console.log(`Email: ${this.state.contact}`);
+        console.log(`name: ${this.state.name}`);
+        console.log(`contact: ${this.state.contact}`);
         console.log(`Password: ${this.state.password}`);
+        console.log(`gender: ${this.state.gender}`);
+        console.log(`dob: ${this.state.dob}`);
 
         const user= {
-            firstName:this.state.firstName,
-            lastName:this.state.lastName,
-            email:this.state.contact,
+            name:this.state.name,
+            contact:this.state.contact,
             password:this.state.password,
+            gender:this.state.gender,
+            dob:this.state.dob,
         }
 
         console.log(user)
-/*        
-        axios.post('http://localhost:4000/register', user)
+        
+        axios.post('http://localhost:4000/addpatient', user)
             .then(res => {
                 console.log(res.data);
                 if(res.data==="success")
                 {
-                    alert("User Created Successfuly");
+                    alert("Patient added Successfuly");
                 }
                 else
                 {
                     alert(res.data);
                 }
             });
-*/
+
         this.setState({
-            firstName:'',
-            lastName:'',
+            name:'',
             contact: '',
             password: '',
+            gender:'male',
             
+            dob:new Date(),
+
+            touched: {
+                name: false,
+                contact: false,
+                password: false,
+              }
+
         });
     }
 
@@ -124,7 +146,7 @@ export default class AddPatient extends Component {
       }
 
     render() {
-        const errors = validate(this.state.firstName,this.state.lastName,this.state.contact, this.state.password);
+        const errors = validate(this.state.name,this.state.contact, this.state.password);
         const isDisabled = Object.keys(errors).some(x => errors[x]);
 
         const shouldMarkError = field => {
@@ -138,50 +160,36 @@ export default class AddPatient extends Component {
             <div style={{marginTop: 10}}>
                 <h3>Create New User</h3>
                 <form onSubmit={this.onSubmit}>
+                
                     <div className="form-group"> 
-                        <label>First Name: </label>
+                        <label>Full Name: </label>
                         <input  type="text"
-                                className={shouldMarkError("firstName") ? "form-control is-invalid" : "form-control"}
-                                value={this.state.firstName}
-                                onChange={this.onChangefirstName}
-                                onBlur={this.handleBlur("firstName")}
+                                className={shouldMarkError("name") ? "form-control is-invalid" : "form-control"}
+                                value={this.state.name}
+                                onChange={this.onChangename}
+                                onBlur={this.handleBlur("name")}
                                 />
-                                {shouldMarkError("firstName") ?
+                                {shouldMarkError("name") ?
                                 <div className="invalid-feedback">
-                                    Please provide a valid firstName.
-                                </div>
-                                :""}
-                    </div>
-                    <div className="form-group">
-                        <label>Last Name: </label>
-                        <input 
-                                type="text" 
-                                className={shouldMarkError("lastName") ? "form-control is-invalid" : "form-control"}
-                                value={this.state.lastName}
-                                onChange={this.onChangelastName}
-                                onBlur={this.handleBlur("lastName")}
-                                />
-                                {shouldMarkError("lastName") ?
-                                <div className="invalid-feedback">
-                                    Please provide a valid lastName.
+                                    Please provide a valid name.
                                 </div>
                                 :""}
                     </div>
                     
                     <div className="form-group">
-                    <label>Contact: </label>
-                    <input 
-                            type="text" 
-                            className={shouldMarkError("contact") ? "form-control is-invalid" : "form-control"}
-                            value={this.state.contact}
-                            onChange={this.onChangeemail}
-                            onBlur={this.handleBlur("contact")}
-                            />
-                            {shouldMarkError("contact") ?
-                                <div className="invalid-feedback">
-                                    Please provide a valid contact like +921112223456.
-                                </div>
-                            :""}
+                        <label>Contact: </label>
+                        <input 
+                                type="text" 
+                                className={shouldMarkError("contact") ? "form-control is-invalid" : "form-control"}
+                                value={this.state.contact}
+                                onChange={this.onChangecontact}
+                                onBlur={this.handleBlur("contact")}
+                                />
+                                {shouldMarkError("contact") ?
+                                    <div className="invalid-feedback">
+                                        Please provide a valid contact like +921112223456.
+                                    </div>
+                                :""}
                     </div>
 
                     <div className="form-group">
@@ -199,6 +207,37 @@ export default class AddPatient extends Component {
                                 </div>
                                 :""}
                     </div>
+
+                    <div>
+                        <label >Gender:</label>
+                            <select value={this.state.gender} onChange={this.onChangegender}>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="trnasgender">Trnasgender</option>
+                            </select>
+                            
+                    </div>
+
+
+                    <div>
+                        <label >Date of Birth:</label>
+                        <br></br>
+                        <DatePicker
+                        onChange={this.onChangedob}
+                        value={this.state.dob}
+                        maxDate={new Date()}
+                        minDate={new Date("1947/08/14")}
+                        peekNextMonth
+                        showMonthDropdown
+                        showYearDropdown
+                        dropdownMode="select"
+                      />
+
+
+                        
+                    </div>
+                        
+ 
 
                     <div className="form-group">
                         <input type="submit" disabled={isDisabled} value="Create User" className="btn btn-primary" />
