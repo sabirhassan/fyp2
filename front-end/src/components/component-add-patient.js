@@ -166,6 +166,7 @@ export default class AddPatient extends Component {
                         <input  type="text"
                                 className={shouldMarkError("name") ? "form-control is-invalid" : "form-control"}
                                 value={this.state.name}
+                                pattern="[A-Za-z]*" title="only valid alphabatic letters"
                                 onChange={this.onChangename}
                                 onBlur={this.handleBlur("name")}
                                 />

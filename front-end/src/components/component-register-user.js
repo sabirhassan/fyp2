@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-
-function ValidateEmail(mail) 
+/*async function ValidateEmail(mail) 
 {
-    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    //console.log("RUNNING VALIDATE EMAIL");
+    var flag = true;
+    var mailformat = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/;
     if(mail.match(mailformat))
     {
         
@@ -13,32 +14,56 @@ function ValidateEmail(mail)
         }
         console.log(mail);
         
-        axios.get('http://localhost:4000/mailcheck',{ params: {email: mail}})
+        await axios.get('http://localhost:4000/mailcheck',{ params: {email: mail}})
             .then(res => {
-                console.log(res.data.EmailNameInUse);
-                if(res.data.EmailNameInUse == true)
-                {
-                    console.log("email in use");
-                }
-                else
-                {
-                    console.log("email not in use");
-                }
+                console.log("here",res.data.EmailNameInUse);
+                //flag = res.data.EmailNameInUse;
+                return false;
             });
             
-        return false;
+        return false;       
     }
     else
     {
+    //flag =  true;
     return true;
+    }
+
+    //return flag;
+}*/
+
+async function ValidateEmail(mail) 
+{
+    var flag = false;
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if(mail.match(mailformat))
+    {
+        
+        const user= {
+            email:mail
+        }
+        console.log(mail);
+        await axios.get('http://localhost:4000/mailcheck',{ params: {email: mail}})
+            .then(res => {
+                console.log("here in axios",res.data.EmailNameInUse);
+                flag = res.data.EmailNameInUse;
+                
+            });
+        console.log("here out axios",flag)
+        return flag;
+    }
+    else
+    {
+        flag=true;
+        console.log("here in else",flag)
+        return flag;
     }
 }
 
-function validate(firstName,lastName,email, password) {
+function validate(name,email, password) {
     // true means invalid, so our conditions got reversed
     return {
-      firstName: firstName.length===0,
-      lastName: lastName.length===0,
+      name: name.length===0,
       email: ValidateEmail(email),
       password: password.length < 8
     };
@@ -50,36 +75,28 @@ export default class Register extends Component {
         super(props);
 
         this.state = {
-            firstName: '',
-            lastName: '',
+            name: '',
             email: '',
             password: '',
             userType: 'doctor',
 
             touched: {
-                firstName: false,
-                lastName: false,
+                name: false,
                 email: false,
                 password: false,
               }
         }
-        this.onChangefirstName = this.onChangefirstName.bind(this);
-        this.onChangelastName = this.onChangelastName.bind(this);
+        this.onChangename = this.onChangename.bind(this);
         this.onChangeemail = this.onChangeemail.bind(this);
         this.onChangepassword = this.onChangepassword.bind(this);
         this.onChangeuserType = this.onChangeuserType.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
     
-    onChangefirstName(e) {
-        this.setState({
-            firstName: e.target.value
-        });
-    }
 
-    onChangelastName(e) {
+    onChangename(e) {
         this.setState({
-            lastName: e.target.value
+            name: e.target.value
         });
     }
 
@@ -105,15 +122,13 @@ export default class Register extends Component {
         e.preventDefault();
         
         console.log(`Form submitted:`);
-        console.log(`firstName: ${this.state.firstName}`);
-        console.log(`lastName: ${this.state.lastName}`);
+        console.log(`name: ${this.state.name}`);
         console.log(`Email: ${this.state.email}`);
         console.log(`Password: ${this.state.password}`);
         console.log(`userType: ${this.state.userType}`);
 
         const user= {
-            firstName:this.state.firstName,
-            lastName:this.state.lastName,
+            name:this.state.name,
             email:this.state.email,
             password:this.state.password,
             userType:this.state.userType
@@ -135,15 +150,13 @@ export default class Register extends Component {
             });
 
         this.setState({
-            firstName:'',
-            lastName:'',
+            name:'',
             email: '',
             password: '',
             userTpye:'doctor',
 
             touched: {
-                firstName: false,
-                lastName: false,
+                name: false,
                 email: false,
                 password: false,
               }
@@ -161,7 +174,7 @@ export default class Register extends Component {
 
 
     render() {
-        const errors = validate(this.state.firstName,this.state.lastName,this.state.email, this.state.password);
+        const errors = validate(this.state.name,this.state.email, this.state.password);
         const isDisabled = Object.keys(errors).some(x => errors[x]);
 
         const shouldMarkError = field => {
@@ -176,31 +189,17 @@ export default class Register extends Component {
                 <h3>Create New User</h3>
                 <form onSubmit={this.onSubmit}>
                     <div className="form-group"> 
-                        <label>First Name: </label>
+                        <label>Full Name: </label>
                         <input  type="text"
-                                className={shouldMarkError("firstName") ? "form-control is-invalid" : "form-control"}
-                                value={this.state.firstName}
-                                onChange={this.onChangefirstName}
-                                onBlur={this.handleBlur("firstName")}
+                                className={shouldMarkError("name") ? "form-control is-invalid" : "form-control"}
+                                value={this.state.name}
+                                pattern="[A-Za-z]*" title="only valid alphabatic letters"
+                                onChange={this.onChangename}
+                                onBlur={this.handleBlur("name")}
                                 />
-                                {shouldMarkError("firstName") ?
+                                {shouldMarkError("name") ?
                                 <div className="invalid-feedback">
-                                    Please provide a valid firstName.
-                                </div>
-                                :""}
-                    </div>
-                    <div className="form-group">
-                        <label>Last Name: </label>
-                        <input 
-                                type="text" 
-                                className={shouldMarkError("lastName") ? "form-control is-invalid" : "form-control"}
-                                value={this.state.lastName}
-                                onChange={this.onChangelastName}
-                                onBlur={this.handleBlur("lastName")}
-                                />
-                                {shouldMarkError("lastName") ?
-                                <div className="invalid-feedback">
-                                    Please provide a valid lastName.
+                                    Please provide a valid Name.
                                 </div>
                                 :""}
                     </div>
@@ -239,6 +238,7 @@ export default class Register extends Component {
 
                     <div>
                     <label >Choose a userType:</label>
+                        <br></br>
                         <select value={this.state.userTpye} onChange={this.onChangeuserType}>
                         <option value="doctor">Doctor</option>
                         <option value="doctor assistant">Doctor Assistant</option>
@@ -247,6 +247,7 @@ export default class Register extends Component {
                         </select>
                         
                   </div>
+                  <br></br>
                     <div className="form-group">
                         <input type="submit" disabled={isDisabled} value="Create User" className="btn btn-primary" />
                     </div>
