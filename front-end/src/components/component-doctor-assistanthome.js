@@ -6,7 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import AddPatient from "./component-add-patient";
 import changePassword from "./component-change-password";
 import AddPrescription from "./component-add-prescription";
-
+import SeePrescription from "./component-see-prescription";
 
 export default class DoctorAssistantHome extends Component {
     render() {
@@ -31,6 +31,9 @@ export default class DoctorAssistantHome extends Component {
                             <li className="navbar-item">
                             <Link to="/changepassword" className="nav-link">Change own Password</Link>
                             </li>
+                            <li className="navbar-item">
+                            <Link to="/seeprescription" className="nav-link">See Patient Prescription</Link>
+                            </li>
                         </ul>
                     </div>
                         
@@ -39,7 +42,7 @@ export default class DoctorAssistantHome extends Component {
                 <Route path="/addpatient" component={AddPatient} />
                 <Route path="/addprescription" component={AddPrescription} />
                 <Route path="/changepassword" component={changePassword} />
-                 
+                <Route path="/seeprescription" component={SeePrescription} />
             </div>
             </Router>
         )

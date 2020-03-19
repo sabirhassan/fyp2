@@ -26,26 +26,25 @@ async  function check_credentials(req, res) {
           req.session._id = doc.id;
           req.session.email = req.body.email;
           req.session.password = req.body.password;
-
           if(data.userType=="admin")
           {
             res.statuscode = 200;
-            res.json({"type":"admin","id":doc.id,"email":req.body.email,"password":req.body.password});
+            res.json({"type":"admin","id":doc.id,"email":req.body.email,"password":req.body.password , "name": data.name});
           }
           else if(data.userType=="doctor")
           {
             res.statuscode = 200;
-            res.json({"type":"doctor","id":doc.id,"email":req.body.email,"password":req.body.password});
+            res.json({"type":"doctor","id":doc.id,"email":req.body.email,"password":req.body.password , "name": data.name});
           }
           else if(data.userType=="doctor assistant")
           {
             res.statuscode = 200;
-            res.json({"type":"doctorAssistant","id":doc.id,"email":req.body.email,"password":req.body.password});
+            res.json({"type":"doctorAssistant","id":doc.id,"email":req.body.email,"password":req.body.password , "name": data.name});
           }
           else if(data.userType=="lab staff")
           {
             res.statuscode = 200;
-            res.json({"type":"labStaff","id":doc.id,"email":req.body.email,"password":req.body.password});
+            res.json({"type":"labStaff","id":doc.id,"email":req.body.email,"password":req.body.password, "name": data.name});
           }
 
         }

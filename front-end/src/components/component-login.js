@@ -50,27 +50,34 @@ export default class Login extends Component {
         
         axios.post('http://localhost:4000/login', user)
             .then(res => {
-                console.log(res.data);
+                console.log(res.data.name);
                 let type = res.data.type;
                 if(type==="admin")
                 {
                     localStorage.setItem("id",res.data.id);
                     localStorage.setItem("type",type);
                     localStorage.setItem("password",res.data.password);
+                    //console.log("OOOO YEAH");
+                    localStorage.setItem("name", res.data.name);
                     return(
                         ReactDOM.render(<AdminHome />, document.getElementById('root'))
                     );
                 }
                 else if(type==="doctor")
                 {
+                    localStorage.setItem("name", res.data.name);
                     ReactDOM.render(<DoctorHome />, document.getElementById('root'))
                 }
                 else if(type==="doctorAssistant")
                 {
+                    localStorage.setItem("name", res.data.name);
+
                     ReactDOM.render(<DoctorAssistantHome />, document.getElementById('root'))
                 }
                 else if(type==="labStaff")
                 {
+                    localStorage.setItem("name", res.data.name);
+
                     ReactDOM.render(<LabStaffHome />, document.getElementById('root'))
                 }
                 else
