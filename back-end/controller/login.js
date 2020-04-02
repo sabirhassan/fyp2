@@ -57,7 +57,8 @@ async  function check_credentials(req, res) {
 
     if(!flag)
     {
-      res.send("invalid credentials")
+      res.statuscode = 200;
+      res.json({"type":"invalid"});
     }
 
   }

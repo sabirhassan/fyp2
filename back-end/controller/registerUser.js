@@ -1,10 +1,4 @@
 
-var sendJSONresponse = function(res, status, content) { //ADDED BY SALLAHUDDIN
-    res.status(status);
-    res.json(content);
-  };
-
-
 module.exports.registerUser = function (req, res) {
 
     console.log(req.body);
@@ -12,6 +6,11 @@ module.exports.registerUser = function (req, res) {
     
 };
 
+module.exports.getdoctors = function (req, res) {
+
+    retrieveDoctors(req,res);
+    
+};
 
 function insertRecord(req, res) {
 
@@ -37,50 +36,49 @@ function insertRecord(req, res) {
         }
         else
         {
-            res.send("Error: user already exists!");
+            res.send("alreadyExists");
         }  
     })
     .catch(err => {
         console.log('Error getting documents', err);
     });
 
-    
 
 }
-/*
-module.exports.checkEmail = function (req, res) {  //ADDED BY SALLAHUDDIN
-    console.log("YEEEEEEEHAW")
-    var mail = req.params.email;
+
+var count = 0
+
+function retrieveDoctors(req, res) {
+
+    console.log("doctor",count++);
+    
+    var doctors = [];
 
     let userRef = db.collection('user');
-    let query = userRef.where('email', '==', mail).get()
+    let query = userRef.where('userType', '==', "doctor").get()
     .then(snapshot => {
         if (snapshot.empty) {
-            var myobj = {
             
-                EmailNameInUse:true
-                
-            };
-            console.log(myobj.EmailNameInUse);
-            sendJSONresponse(res,200,myobj);
+            res.send("empty")
+
         }
         else
         {
-            var myobj = {
-            
-                EmailNameInUse:false
-            }
-            console.log(myobj.EmailNameInUse);
-            sendJSONresponse(res,200,myobj);
+            snapshot.forEach((doc) => {
+                var data = doc.data();
+                doctors.push(data.name);
+              });
+
+              res.send(doctors);
         }  
     })
     .catch(err => {
         console.log('Error getting documents', err);
     });
     
-};*/
+}
 
-module.exports.checkEmail = function (req, res) {  //ADDED BY SALLAHUDDIN
+/*module.exports.checkEmail = function (req, res) {  //ADDED BY SALLAHUDDIN
     console.log("node api")
     var mail = req.query.email;
     console.log(mail);
@@ -110,4 +108,4 @@ module.exports.checkEmail = function (req, res) {  //ADDED BY SALLAHUDDIN
         console.log('Error getting documents', err);
     });
     
-};
+};*/

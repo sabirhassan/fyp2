@@ -80,9 +80,9 @@ export default class Login extends Component {
 
                     ReactDOM.render(<LabStaffHome />, document.getElementById('root'))
                 }
-                else
+                else if(type=="invalid")
                 {
-                    console.log(res.data)
+                    alert("invalid credentials")
                 }
             });
 

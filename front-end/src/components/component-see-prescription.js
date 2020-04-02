@@ -1,142 +1,272 @@
 import React, { Component } from 'react';
+import { Multiselect } from 'multiselect-react-dropdown';
+import Table from 'react-bootstrap/Table'
 import axios from 'axios';
-import Switch from 'react-switch'
+
+function Validatephone(contact) 
+{
+//    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    var phoneno = /^\+?([0-9]{12})\)?$/;
+    if(contact.match(phoneno))
+    {
+    return false;
+    }
+    else
+    {
+    return true;
+    }
+}
+
+function validate(contact) {
+    // true means invalid, so our conditions got reversed
+    return {
+       contact: Validatephone(contact),
+    };
+}
 
 export default class SeePrescription extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            medicineName: '',
-            patientContact: '',
-            afternoon: false,
-            morning: false,
-            evening: false,
-
+            contact: '',
+            name:'',
+            nameList:[],
+            checkName:true,
+            prescription:[],
+            checkPrescription:false,
             touched: {
-                medicineName: false,
-                patientContact: false,
+                contact: false,
               }
+            
         }
-        this.onChangeMedicineName = this.onChangeMedicineName.bind(this);
-        this.onChangeContact = this.onChangeContact.bind(this);
-        this.onAfternoonChange = this.onAfternoonChange.bind(this);
-        this.onEveningChange = this.onEveningChange.bind(this);
-        this.onMorningChange = this.onMorningChange.bind(this)
-        this.onSubmit = this.onSubmit.bind(this);
+        this.onChangecontact = this.onChangecontact.bind(this);
+        this.onChangename = this.onChangename.bind(this);
+     
     }
-    onEveningChange(e){
+    onChangecontact(e) {
         this.setState({
-            evening:e
-        });
-    }
-    onMorningChange(m){
-        this.setState({
-            morning:m
-        });
-        console.log(this.state.morning)
-    }
-    onAfternoonChange(a){
-        this.setState({
-            afternoon:a
-        });
-    }
-    onChangeMedicineName(e) {
-        this.setState({
-            medicineName: e.target.value
+            contact: e.target.value,
+            nameList:[],
+            checkName:true,
+            checkPrescription:false,
+            prescription:[]
         });
     }
 
-    onChangeContact(e) {
+    onChangename(e) {
         this.setState({
-            patientContact: e.target.value
+            name: e.target.value,
+            prescription:[],
+            checkPrescription:true
         });
     }
 
-    onSubmit(e) {
-        e.preventDefault();
-        const med= {
-            medicineName:this.state.medicineName,
-            patientContact:this.state.patientContact,
-            afternoon:this.state.afternoon,
-            morning:this.state.morning,
-            evening:this.state.evening,
-            doctor:localStorage.getItem("name")
 
-        }
-        axios.post('http://localhost:4000/addPrescription', med)
-            .then(res => {
-                console.log(res.data);
-                if(res.data==="success")
+     
+    handleBlur = (field) => (evt) => {
+        this.setState({
+          touched: { ...this.state.touched, [field]: true },
+        });
+      }
+
+
+      render() {
+
+        const errors = validate(this.state.contact);
+        const isDisabled = Object.keys(errors).some(x => errors[x]);
+
+        
+        const shouldMarkError = field => {
+            const hasError = errors[field];
+            const shouldShow = this.state.touched[field];      
+            return hasError ? shouldShow : false;
+          };
+    
+        const createNameElement = () => {
+
+            if(!Validatephone(this.state.contact))
+            {
+            
+            const user= {
+                contact:this.state.contact,
+            }
+
+            if(this.state.checkName)
+            {// to stop useless api calls
+                const promise1 = new Promise(function(resolve, reject) {
+                    
+                    axios.post('http://localhost:4000/getpatients', user)
+                    .then(res => {
+                        resolve(res.data)
+                    });
+                });
+                
+                promise1.then((value) =>{
+                    if(value!="empty")
+                    this.setState({
+                        nameList: value,
+                        name:value[0],
+                        checkName:false,
+                        checkPrescription:true,
+                    });
+                });
+                
+            }
+
+                if(this.state.nameList.length>0)
                 {
-                    alert("Prescription Created Successfuly");
+                    return (
+                            <div>
+                            <label >Select Patient:</label>
+                                <br></br>
+                                <select value={this.state.name} onChange={this.onChangename}>
+                                {this.state.nameList.map((n) => <option value={n}>{n}</option>)}
+                                </select>
+                                
+                            </div>
+                            );            
                 }
                 else
                 {
-                    alert(res.data);
-                }
-            });
-        this.state = {
-            medicineName: '',
-            patientContact: '',
-            afternoon: false,
-            morning: false,
-            evening: false,
+                    return(
+                    <div className="invalid-feedback">
+                            No patient exists with this contact.
+                    </div>
+                    );
+                }  
+
+            }
+            else
+            {
+                return (
+                    <div>
+                    </div>
+                    );
+            }
+        }          
+         
+        const createMedicineList = medicineList =>{
+            return medicineList.map((item, index) => {
+                const { medicine, dosage,days, morning,afternoon,evening, instructions } = item 
+                return (
+ 
+                   <tr>
+                      <td >{medicine}</td>
+                      <td >dosage: {dosage}</td>
+                      <td >days: {days}</td>
+                      <td >{morning?"morning":""}</td>
+                      <td >{afternoon?"afternoon":""}</td>
+                      <td >{evening?"evening":""}</td>
+                      <td >{instructions}</td>
+                      
+                   </tr>
+                )
+             })
         }
+
+        const createTableElement = () => {
+
+            if(this.state.checkPrescription)
+            {
+            
+                const user= {
+                    contact:this.state.contact,
+                    name:this.state.name,
+                }
+
+                const promise1 = new Promise(function(resolve, reject) {
+                    
+                    axios.post('http://localhost:4000/getPrescription', user)
+                    .then(res => {
+                        resolve(res.data)
+                    });
+                });
+                
+                promise1.then((value) =>{
+                    console.log(value);
+                    if(value!="empty")
+                    this.setState({
+                        prescription: value,
+                        checkPrescription:false,
+                    });
+                });
+            
+            }
+
+            if(this.state.prescription.length>0)
+            {
+                return this.state.prescription.map((item, index) => {
+                    const { contact, name,doctor, date, prescription } = item 
+                    return (
+     
+                        <Table striped bordered hover >
+                        <thead>
+                            <tr>
+                                <th>prescription #{index}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td >contact:{contact}</td>
+                            <td >patient:{name}</td>
+                            <td >doctor:{doctor}</td>
+                            <td >date:{date}</td>
+                        </tr>
+                        <tr>
+                            <td >Medicine List</td>
+                        </tr>
+
+                        {createMedicineList(prescription)}
+   
+                        </tbody>
+                        </Table>
+                    )
+                 })            
+            }
+            else
+            {
+                return (
+                    <div>
+                    </div>
+                    );
+            }
+        }
+
+        const nameElement = createNameElement();
+
+        const tableElement = createTableElement() 
+
+        return (
+            <div className="form-group">
+                    <div>
+                    <label>Contact: </label>
+                    <input 
+                            type="text" 
+                            className={shouldMarkError("contact") ? "form-control is-invalid" : "form-control"}
+                            value={this.state.contact}
+                            onChange={this.onChangecontact}
+                            onBlur={this.handleBlur("contact")}
+                            />
+                            {shouldMarkError("contact") ?
+                                <div className="invalid-feedback">
+                                    Please provide a valid contact like +921112223456.
+                                </div>
+                            :""}
+
+                    </div>
+
+                <div>
+                {nameElement}
+                </div>
+
+                <div>
+                {tableElement}
+                </div>
+                
+            </div>
+            
+        )
     }
 
-
-    render() {
-        return (
-             <div style={{marginTop: 10}}>
-                <h3>ADD A SeePrescription</h3>
-                <form onSubmit={this.onSubmit}>
-                    <div className="form-group"> 
-                        <label>Contact </label>
-                        <input  type="text" 
-                                className={"form-control"}
-                                value={this.state.patientContact}
-                                onChange={this.onChangeContact}
-                                />
-                                
-                    </div>
-                    
-                    <div className="form-group">
-                    <label>Medicine Name: </label>
-                    <input type="text" 
-                                className={"form-control"}
-                                value={this.state.medicineName}
-                                onChange={this.onChangeMedicineName}
-                            />
-                            
-                    </div>
-                    <div>
-                    <p>Morining</p>
-                    <Switch className = "react-switch"
-                            onChange = {this.onMorningChange}
-                            checked = {this.state.morning}
-                            />
-                    </div>
-                    <div>
-                    <p>Afternoon</p>
-                    <Switch className = "react-switch"
-                            onChange = {this.onAfternoonChange}
-                            checked = {this.state.afternoon}
-                            />
-                    </div>
-                    <div>
-                    <p>Evening</p>
-                    <Switch className = "react-switch"
-                            onChange = {this.onEveningChange}
-                            checked = {this.state.evening}
-                            />
-                    </div>
-                  <br></br>
-                    <div className="form-group">
-                        <input type="submit"  value="Create Prescription" className="btn btn-primary" />
-                    </div>
-                </form>
-
-            </div>
-        )};
-};
+}

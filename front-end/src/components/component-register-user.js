@@ -32,29 +32,21 @@ import axios from 'axios';
     //return flag;
 }*/
 
-async function ValidateEmail(mail) 
+
+function ValidateEmail(mail) 
 {
     var flag = false;
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if(mail.match(mailformat))
-    {
-        
-        const user= {
-            email:mail
-        }
+    {        
+        console.log("here in if",flag)
         console.log(mail);
-        await axios.get('http://localhost:4000/mailcheck',{ params: {email: mail}})
-            .then(res => {
-                console.log("here in axios",res.data.EmailNameInUse);
-                flag = res.data.EmailNameInUse;
-                
-            });
-        console.log("here out axios",flag)
         return flag;
     }
     else
     {
         flag=true;
+        console.log(mail);
         console.log("here in else",flag)
         return flag;
     }
@@ -141,7 +133,23 @@ export default class Register extends Component {
                 console.log(res.data);
                 if(res.data==="success")
                 {
+                    this.setState({
+                        name:'',
+                        email: '',
+                        password: '',
+                        userTpye:'doctor',
+            
+                        touched: {
+                            name: false,
+                            email: false,
+                            password: false,
+                          }
+                    });
                     alert("User Created Successfuly");
+                }
+                else if(res.data==="alreadyExists")
+                {
+                    alert("User with this Email already exists");
                 }
                 else
                 {
@@ -149,18 +157,7 @@ export default class Register extends Component {
                 }
             });
 
-        this.setState({
-            name:'',
-            email: '',
-            password: '',
-            userTpye:'doctor',
 
-            touched: {
-                name: false,
-                email: false,
-                password: false,
-              }
-        });
     }
 
 
@@ -183,6 +180,8 @@ export default class Register extends Component {
       
             return hasError ? shouldShow : false;
           };
+
+
 
         return (
             <div style={{marginTop: 10}}>
@@ -213,12 +212,16 @@ export default class Register extends Component {
                             onChange={this.onChangeemail}
                             onBlur={this.handleBlur("email")}
                             />
+
                             {shouldMarkError("email") ?
-                                <div className="invalid-feedback">
-                                    Please provide a valid email.
-                                </div>
+                            <div className="invalid-feedback">
+                                Please provide a valid email.
+                            </div>
                             :""}
+        
+                            
                     </div>
+                    
 
                     <div className="form-group">
                         <label>Password: </label>

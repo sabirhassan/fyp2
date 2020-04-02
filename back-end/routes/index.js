@@ -17,28 +17,33 @@ router
     .route("/register")
     .post(ctrl_registerUser.registerUser);
 
+router
+    .route("/getdoctors")
+    .post(ctrl_registerUser.getdoctors);    
 
 router
     .route("/updatepassword")
     .post(ctrl_changePassword.updatePassword);
 
 
-
 router
     .route("/passwordreset")
     .post(ctrl_resetPassword.resetPassword);
 
-router
-    .route("/mailcheck")
-    .get(ctrl_registerUser.checkEmail);
 
 router
     .route("/addpatient")
     .post(ctrl_registerPatient.registerPatient)
 
 router
+    .route("/getpatients")
+    .post(ctrl_registerPatient.getPatients)
+
+
+
+router
     .route("/getPrescription")
-    .get(ctrl_patientPrescription.getPrescription)
+    .post(ctrl_patientPrescription.getPrescription)
 
 router
     .route("/addPrescription")

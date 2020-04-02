@@ -4,6 +4,14 @@ module.exports.registerPatient = function (req, res) {
     insertRecord(req,res);
     
 };
+
+module.exports.getPatients = function (req, res) {
+
+    console.log(req.body);
+    retrievePatient(req,res);
+    
+};
+
 function parseDate(date) { 
     var arr = date.split("-");
     var year =arr[0];
@@ -20,11 +28,13 @@ function parseDate(date) {
 function insertRecord(req, res) {
 
     var contact = req.body.contact;
+    var name = req.body.name;
     var date= parseDate(req.body.dob);
     
 
     let userRef = db.collection('patient');
-    let query = userRef.where('contact', '==', contact).get()
+    let query = userRef.where('contact', '==', contact).
+                where('name', '==', name).get()
     .then(snapshot => {
         if (snapshot.empty) {
             
@@ -50,6 +60,40 @@ function insertRecord(req, res) {
         else
         {
             res.send("Error: user already exists!");
+        }  
+    })
+    .catch(err => {
+        console.log('Error getting documents', err);
+    });
+
+    
+}
+
+var count = 0
+
+function retrievePatient(req, res) {
+
+    console.log("patient",count++)
+    var contact = req.body.contact;
+    
+    var patients = [];
+
+    let userRef = db.collection('patient');
+    let query = userRef.where('contact', '==', contact).get()
+    .then(snapshot => {
+        if (snapshot.empty) {
+            
+            res.send("empty")
+
+        }
+        else
+        {
+            snapshot.forEach((doc) => {
+                var data = doc.data();
+                patients.push(data.name);
+              });
+
+              res.send(patients);
         }  
     })
     .catch(err => {

@@ -98,8 +98,8 @@ export default class AddPatient extends Component {
         console.log(`dob: ${this.state.dob}`);
 
         const user= {
-            name:this.state.name,
             contact:this.state.contact,
+            name:this.state.name,
             password:this.state.password,
             gender:this.state.gender,
             dob:this.state.dob,
@@ -113,6 +113,21 @@ export default class AddPatient extends Component {
                 if(res.data==="success")
                 {
                     alert("Patient added Successfuly");
+                    this.setState({
+                        name:'',
+                        contact: '',
+                        password: '',
+                        gender:'male',
+                        
+                        dob:new Date(),
+            
+                        touched: {
+                            name: false,
+                            contact: false,
+                            password: false,
+                          }
+            
+                    });
                 }
                 else
                 {
@@ -120,21 +135,7 @@ export default class AddPatient extends Component {
                 }
             });
 
-        this.setState({
-            name:'',
-            contact: '',
-            password: '',
-            gender:'male',
-            
-            dob:new Date(),
 
-            touched: {
-                name: false,
-                contact: false,
-                password: false,
-              }
-
-        });
     }
 
 
@@ -166,7 +167,7 @@ export default class AddPatient extends Component {
                         <input  type="text"
                                 className={shouldMarkError("name") ? "form-control is-invalid" : "form-control"}
                                 value={this.state.name}
-                                pattern="[A-Za-z]*" title="only valid alphabatic letters"
+                                pattern="[A-Za-z ]*" title="only valid alphabatic letters"
                                 onChange={this.onChangename}
                                 onBlur={this.handleBlur("name")}
                                 />
@@ -214,7 +215,7 @@ export default class AddPatient extends Component {
                             <select value={this.state.gender} onChange={this.onChangegender}>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
-                            <option value="trnasgender">Trnasgender</option>
+                            <option value="other">Other</option>
                             </select>
                             
                     </div>
