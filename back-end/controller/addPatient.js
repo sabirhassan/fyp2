@@ -28,13 +28,11 @@ function parseDate(date) {
 function insertRecord(req, res) {
 
     var contact = req.body.contact;
-    var name = req.body.name;
     var date= parseDate(req.body.dob);
     
 
     let userRef = db.collection('patient');
-    let query = userRef.where('contact', '==', contact).
-                where('name', '==', name).get()
+    let query = userRef.where('contact', '==', contact).get()
     .then(snapshot => {
         if (snapshot.empty) {
             

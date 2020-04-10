@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Multiselect } from 'multiselect-react-dropdown';
 import Table from 'react-bootstrap/Table'
 import axios from 'axios';
+import {Datatable} from "@o2xp/react-datatable";
+import AddIcon from '@material-ui/icons/Add';
 
 function Validatephone(contact) 
 {
@@ -17,13 +19,111 @@ function Validatephone(contact)
     }
 }
 
-function validate(contact,prescription) {
+function validate(contact) {
     // true means invalid, so our conditions got reversed
     return {
-        prescription: prescription.length==0,
        contact: Validatephone(contact),
     };
 }
+
+var count = 0
+
+
+// Advanced Example
+const options = {
+    title: "My super datatable",
+    dimensions: {
+      datatable: {
+        width: "90%",
+        height: "40%"
+      },
+      row: {
+        height: "48px"
+      }
+    },
+    keyColumn: "id",
+    font: "Arial",
+    data: {
+      columns: [
+        {
+          id: "id",
+          label: "id",
+          colSize: "150px",
+          editable: false
+        },
+        {
+          id: "name",
+          label: "name",
+          colSize: "100px",
+          editable: true,
+          inputType: "select",
+          values: ["green", "blue", "brown"]
+        },
+        {
+          id: "days",
+          label: "days",
+          colSize: "80px",
+          editable: true,
+          dataType: "number",
+          valueVerification: val => {
+            let error = val > 100 ? true : false;
+            let message = val > 100 ? "Value is too big" : "";
+            return {
+              error: error,
+              message: message
+            };
+          }
+        },
+        {
+          id: "morning",
+          label: "morning",
+          colSize: "50px",
+          editable: true,
+          dataType: "boolean",
+          inputType: "checkbox"
+        },
+        {
+            id: "noon",
+            label: "noon",
+            colSize: "50px",
+            editable: true,
+            dataType: "boolean",
+            inputType: "checkbox"
+        },
+        {
+            id: "evening",
+            label: "evening",
+            colSize: "50px",
+            editable: true,
+            dataType: "boolean",
+            inputType: "checkbox"
+        },
+        {
+            id: "instruction",
+            label: "instruction",
+            colSize: "100px",
+            editable: true,
+            dataType: "text",
+            inputType: "input"
+        }
+      ],
+      rows: []
+    },
+    features: {
+      canEdit: true,
+      canDelete: true,
+      canSearch: true,
+      canOrderColumns: true,
+      additionalIcons: [
+        {
+          title: "Add medicine",
+          icon: <AddIcon color="primary" />,
+          onClick: () => alert("Add Medicine!")
+        }
+      ],
+    }
+  };
+
 
 export default class AddPrescription extends Component {
     constructor(props) {
@@ -32,8 +132,6 @@ export default class AddPrescription extends Component {
         this.state = {
             contact: '',
             name:'',
-            nameList:[],
-            checkName:true,
             doctor:'',
             doctorList:[],
             checkdoctor:true,
@@ -44,22 +142,22 @@ export default class AddPrescription extends Component {
             days:'',
             timings:[],
             instructions:'',
-            prescriptions : [],
+            data:[],
+            options:{},
+            gotData:false,
+            medicineList:[],
             touched: {
                 contact: false,
               }
             
         }
         this.onChangecontact = this.onChangecontact.bind(this);
-        this.onChangename = this.onChangename.bind(this);
         this.onChangedoctor = this.onChangedoctor.bind(this);
         this.onChangemedicine = this.onChangemedicine.bind(this);
         this.onChangedosage = this.onChangedosage.bind(this);
         this.onChangedays = this.onChangedays.bind(this);
         this.onChangeinstructions = this.onChangeinstructions.bind(this);
         this.handleSubmitAdd = this.handleSubmitAdd.bind(this);
-        this.onSelect = this.onSelect.bind(this);
-        this.onRemove = this.onRemove.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
      
     }
@@ -68,12 +166,6 @@ export default class AddPrescription extends Component {
             contact: e.target.value,
             nameList:[],
             checkName:true
-        });
-    }
-
-    onChangename(e) {
-        this.setState({
-            name: e.target.value
         });
     }
 
@@ -107,18 +199,6 @@ export default class AddPrescription extends Component {
         });
     }
 
-    onSelect(selectedList, selectedItem) {
-        this.state.timings.push(selectedItem.name);
-      
-    }
-
-    onRemove(selectedList, removedItem) {
-        for( var i = 0; i < this.state.timings.length; i++){ 
-            if ( this.state.timings[i] === removedItem.name) { 
-                this.state.timings.splice(i, 1); 
-            }
-        }
-    }
 
     handleSubmitAdd(e){
         e.preventDefault();
@@ -223,9 +303,142 @@ export default class AddPrescription extends Component {
       } 
 
 
+      actionsRow = ({ type, payload }) => {
+        console.log(type);
+        console.log(payload);
+    };
+
+    updateoptions = ()=>
+    {
+
+      if(this.state.gotData==false)
+      {
+        console.log(count++)
+
+        const promise1 = new Promise(function(resolve, reject) {
+                      
+        axios.post('http://localhost:4000/getMedicines',)
+        .then(res => {
+            resolve(res.data)
+          });
+        });
+      
+        promise1.then((value) =>{
+            if(value!="empty")
+            {
+
+                let list = []
+                for(var i=0;i<value.length;i++)
+                {
+                    let n = value[i]["Drug Name"] + " " + value[i]["Strength"] + " " + value[i]["Form"]
+                    list.push(n)
+                }
+
+                this.setState({
+                    medicineList: list,
+                    gotData:true,
+                    options : {
+                        title: "prescription datatable",
+                        dimensions: {
+                          datatable: {
+                            width: "90%",
+                            height: "40%"
+                          },
+                          row: {
+                            height: "48px"
+                          }
+                        },
+                        keyColumn: "id",
+                        font: "Arial",
+                        data: {
+                          columns: [
+                            {
+                              id: "name",
+                              label: "name",
+                              colSize: "100px",
+                              editable: true,
+                              inputType: "select",
+                              values: this.state.medicineList
+                            },
+                            {
+                              id: "days",
+                              label: "days",
+                              colSize: "80px",
+                              editable: true,
+                              dataType: "number",
+                              valueVerification: val => {
+                                let error = val > 100 ? true : false;
+                                let message = val > 100 ? "Value is too big" : "";
+                                return {
+                                  error: error,
+                                  message: message
+                                };
+                              }
+                            },
+                            {
+                              id: "morning",
+                              label: "morning",
+                              colSize: "50px",
+                              editable: true,
+                              dataType: "boolean",
+                              inputType: "checkbox"
+                            },
+                            {
+                                id: "noon",
+                                label: "noon",
+                                colSize: "50px",
+                                editable: true,
+                                dataType: "boolean",
+                                inputType: "checkbox"
+                            },
+                            {
+                                id: "evening",
+                                label: "evening",
+                                colSize: "50px",
+                                editable: true,
+                                dataType: "boolean",
+                                inputType: "checkbox"
+                            },
+                            {
+                                id: "instruction",
+                                label: "instruction",
+                                colSize: "100px",
+                                editable: true,
+                                dataType: "text",
+                                inputType: "input"
+                            }
+                          ],
+                          rows: []
+                        },
+                        features: {
+                          canEdit: true,
+                          canDelete: true,
+                          canSearch: true,
+                          canOrderColumns: true,
+                          additionalIcons: [
+                            {
+                              title: "Add medicine",
+                              icon: <AddIcon color="primary" />,
+                              onClick: () => alert("Add Medicine!")
+                            }
+                          ],
+                        }
+                      }
+            
+                });
+            }
+        });
+
+      }
+
+      
+    }
+
+    
+
     render() {
 
-        const errors = validate(this.state.contact,this.state.prescriptions);
+        const errors = validate(this.state.contact);
         const isDisabled = Object.keys(errors).some(x => errors[x]);
 
         
@@ -358,117 +571,24 @@ export default class AddPrescription extends Component {
             }
         }
 
-        const createMedicineElement = () => {
+        const createTableElement = () => {
 
-            const options= [{name: 'morning', id: 1},{name: 'noon', id: 2},{name: 'evening', id: 3}]
+            this.updateoptions()
+            return(
+            <div style={{marginTop: 10,zIndex:1}}>
+            <h3>Medicine List</h3>
+            <Datatable
+            options={this.state.options}
+            actions={this.actionsRow}
+            />
 
-            if(this.state.showMedicine)
-            {
-                return (
-                    
-                    <div className="form-group" >
-                    <form onSubmit={this.handleSubmitAdd}>
-                    <h3>Add Medicine</h3>
-
-                        <br></br>
-                        <input 
-                        type="text"
-                        placeholder="Medicine"
-                        required
-                        colspan = "4"
-                        className={"form-control"}
-                        value={this.state.medicine}
-                        onChange={this.onChangemedicine}
-                        />
-
-
-                        <input 
-                        type="text"
-                        placeholder="Dosage"
-                        required 
-                        colspan="4"
-                        className={"form-control"}
-                        value={this.state.dosage}
-                        onChange={this.onChangedosage}
-                        />
-
-                        <input 
-                        type="text"
-                        pattern = "[0-9]*"
-                        placeholder="days"
-                        min="1"
-                        required 
-                        className={"form-control"}
-                        value={this.state.days}
-                        onChange={this.onChangedays}
-                        />
-
-                        <Multiselect
-                        options={options} // Options to display in the dropdown
-                        displayValue="name" // Property name to display in the dropdown options
-                        placeholder="timings"
-                        onSelect={this.onSelect}
-                        onRemove={this.onRemove}
-                        />
-                        <textarea
-                        placeholder="Instructions" 
-                        className={"form-control"}
-                        value={this.state.instructions}
-                        onChange={this.onChangeinstructions}
-                        />
-
-                        <input 
-                        type="submit"
-                        value = "Add"
-                        />
-                    </form>
-
-                    </div>
-                    );
-            }
-
-            else
-            {
-                return(
-                    <div>
-                    </div>
-                );
-            }
-        
-        }
-
-        const remove = param =>{
-            for( var i = 0; i < this.state.prescriptions.length; i++){ 
-                if ( this.state.prescriptions[i].medicine === param) { 
-                    this.state.prescriptions.splice(i, 1); 
-                }
-            }   
-        }
-
-        const createMedicineTable = ()=> {
-            return this.state.prescriptions.map((item, index) => {
-               const { medicine, dosage,days, timings, instructions } = item 
-               return (
-
-                  <tr>
-                     <td >{index}</td>
-                     <td >{medicine}</td>
-                     <td >{dosage}</td>
-                     <td >{days}</td>
-                     <td >{timings}</td>
-                     <td >{instructions}</td>
-                     <div>
-                        <a href="#" onClick={() => remove(medicine)}>x</a>
-                    </div>
-                  </tr>
-               )
-            })
-         }
+            </div>
+            )
+    }
 
         const nameElement = createNameElement(this.state.contact);
         const doctorElement = createDoctorElement();
-        const medicineElement = createMedicineElement();
-        const medicineTable = createMedicineTable();
+        const Table = createTableElement();
 
         return (
             <div className="form-group">
@@ -503,32 +623,13 @@ export default class AddPrescription extends Component {
 
 
                 <div>
-                {medicineElement}
+                {Table}
                 </div>
 
 
-                    <h3>Medicine List</h3>
-                    
-                    <Table striped bordered hover >
-                    <thead>
-                        <tr>
-                        <th>#</th>
-                        <th>Medicine</th>
-                        <th>Dosage</th>
-                        <th>Days</th>
-                        <th>Timings</th>
-                        <th>Instructions</th>
-                        </tr>
-
-                    </thead>
-                    <tbody>
-                        {medicineTable}
-                    </tbody>
-                    </Table>
-
-                    <div className="form-group">
-                        <input type="submit" disabled={isDisabled} value="Add prescription" onClick={this.onSubmit} className="btn btn-primary" />
-                    </div>
+                <div className="form-group">
+                    <input type="submit" disabled={isDisabled} style={{marginTop:10}} value="Add prescription" onClick={this.onSubmit} className="btn-primary" />
+                </div>
 
 
             </div>

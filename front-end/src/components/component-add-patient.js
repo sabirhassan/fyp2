@@ -241,8 +241,8 @@ export default class AddPatient extends Component {
                         
  
 
-                    <div className="form-group">
-                        <input type="submit" disabled={isDisabled} value="Create User" className="btn btn-primary" />
+                    <div className="form-group" style={{marginTop:10}}>
+                        <input type="submit" disabled={isDisabled} value="Create User" className="btn-primary" />
                     </div>
                 </form>
 

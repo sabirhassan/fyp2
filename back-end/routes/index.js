@@ -5,6 +5,7 @@ const ctrl_changePassword = require("../controller/changePassword.js");
 const ctrl_resetPassword = require("../controller/resetPassword.js");
 const ctrl_registerPatient = require("../controller/addPatient.js");
 const ctrl_patientPrescription = require("../controller/prescription.js");
+const ctrl_medicine = require("../controller/medicine.js");
 
 const router = express.Router();
 
@@ -48,4 +49,21 @@ router
 router
     .route("/addPrescription")
     .post(ctrl_patientPrescription.addPrescription)
+
+router
+    .route("/addMedicine")
+    .post(ctrl_medicine.addMedicine)
+
+router
+    .route("/getMedicines")
+    .post(ctrl_medicine.getMedicines)    
+
+router
+    .route("/deleteMedicine")
+    .post(ctrl_medicine.deleteMedicine)    
+
+router
+    .route("/updateMedicine")
+    .post(ctrl_medicine.updateMedicine)    
+
 module.exports = router;
