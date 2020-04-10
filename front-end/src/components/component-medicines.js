@@ -281,8 +281,8 @@ export default class medicineList extends Component {
                   title: "Medicine dataTable",
                   dimensions: {
                     datatable: {
-                      width: "90%",
-                      height: "150%"
+                      width: "100%",
+                      height:"480px"
                     },
                     row: {
                       height: "48px"

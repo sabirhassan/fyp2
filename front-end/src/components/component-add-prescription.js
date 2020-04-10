@@ -19,110 +19,17 @@ function Validatephone(contact)
     }
 }
 
-function validate(contact) {
+function validate(contact,name) {
     // true means invalid, so our conditions got reversed
     return {
        contact: Validatephone(contact),
+       name:name.length===0
     };
 }
 
 var count = 0
-
-
-// Advanced Example
-const options = {
-    title: "My super datatable",
-    dimensions: {
-      datatable: {
-        width: "90%",
-        height: "40%"
-      },
-      row: {
-        height: "48px"
-      }
-    },
-    keyColumn: "id",
-    font: "Arial",
-    data: {
-      columns: [
-        {
-          id: "id",
-          label: "id",
-          colSize: "150px",
-          editable: false
-        },
-        {
-          id: "name",
-          label: "name",
-          colSize: "100px",
-          editable: true,
-          inputType: "select",
-          values: ["green", "blue", "brown"]
-        },
-        {
-          id: "days",
-          label: "days",
-          colSize: "80px",
-          editable: true,
-          dataType: "number",
-          valueVerification: val => {
-            let error = val > 100 ? true : false;
-            let message = val > 100 ? "Value is too big" : "";
-            return {
-              error: error,
-              message: message
-            };
-          }
-        },
-        {
-          id: "morning",
-          label: "morning",
-          colSize: "50px",
-          editable: true,
-          dataType: "boolean",
-          inputType: "checkbox"
-        },
-        {
-            id: "noon",
-            label: "noon",
-            colSize: "50px",
-            editable: true,
-            dataType: "boolean",
-            inputType: "checkbox"
-        },
-        {
-            id: "evening",
-            label: "evening",
-            colSize: "50px",
-            editable: true,
-            dataType: "boolean",
-            inputType: "checkbox"
-        },
-        {
-            id: "instruction",
-            label: "instruction",
-            colSize: "100px",
-            editable: true,
-            dataType: "text",
-            inputType: "input"
-        }
-      ],
-      rows: []
-    },
-    features: {
-      canEdit: true,
-      canDelete: true,
-      canSearch: true,
-      canOrderColumns: true,
-      additionalIcons: [
-        {
-          title: "Add medicine",
-          icon: <AddIcon color="primary" />,
-          onClick: () => alert("Add Medicine!")
-        }
-      ],
-    }
-  };
+var timings=["true","false"]
+var id = 0
 
 
 export default class AddPrescription extends Component {
@@ -137,11 +44,6 @@ export default class AddPrescription extends Component {
             checkdoctor:true,
             showdoctor:false,
             showMedicine:false,
-            medicine:'',
-            dosage:'',
-            days:'',
-            timings:[],
-            instructions:'',
             data:[],
             options:{},
             gotData:false,
@@ -153,11 +55,6 @@ export default class AddPrescription extends Component {
         }
         this.onChangecontact = this.onChangecontact.bind(this);
         this.onChangedoctor = this.onChangedoctor.bind(this);
-        this.onChangemedicine = this.onChangemedicine.bind(this);
-        this.onChangedosage = this.onChangedosage.bind(this);
-        this.onChangedays = this.onChangedays.bind(this);
-        this.onChangeinstructions = this.onChangeinstructions.bind(this);
-        this.handleSubmitAdd = this.handleSubmitAdd.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
      
     }
@@ -165,7 +62,8 @@ export default class AddPrescription extends Component {
         this.setState({
             contact: e.target.value,
             nameList:[],
-            checkName:true
+            checkName:true,
+            name:''
         });
     }
 
@@ -175,77 +73,7 @@ export default class AddPrescription extends Component {
         });
     }
 
-    onChangemedicine(e) {
-        this.setState({
-            medicine: e.target.value
-        });
-    }
-
-    onChangedosage(e) {
-        this.setState({
-            dosage: e.target.value
-        });
-    }
-
-    onChangedays(e) {
-        this.setState({
-            days: e.target.value
-        });
-    }
-
-    onChangeinstructions(e) {
-        this.setState({
-            instructions: e.target.value
-        });
-    }
-
-
-    handleSubmitAdd(e){
-        e.preventDefault();
-        console.log(this.state.medicine,this.state.dosage,this.state.days,this.state.timings,this.state.instructions);
-        
-        var morning = false;
-        var afternoon = false;
-        var evening = false;
-
-        for(var i=0;i<this.state.timings.length;i++)
-        {   
-            if(this.state.timings[i] == "morning")
-            {
-                morning = true;
-            }
-            else if(this.state.timings[i] == "noon")
-            {
-                afternoon = true;
-            }
-            else if(this.state.timings[i] == "evening")
-            {
-                evening = true;
-            }
-        }
-
-        const item = {
-            medicine:this.state.medicine,
-            dosage:this.state.dosage,
-            days:this.state.days,
-            morning:morning,
-            afternoon:afternoon,
-            evening:evening,
-            timings:this.state.timings,
-            instructions:this.state.instructions
-        }
-        this.state.prescriptions.push(item);
-        console.log(this.state.prescriptions);
-
-        this.setState({
-            medicine:'',
-            dosage:'',
-            days:'',
-            instructions: '',
-            
-        });
-
-    }
+ 
 
     onSubmit(e) {
         e.preventDefault();
@@ -254,7 +82,17 @@ export default class AddPrescription extends Component {
             contact: this.state.contact,
             name:this.state.name,
             doctor:this.state.doctor,
-            prescriptions : this.state.prescriptions
+            prescriptions : this.state.data
+        }
+
+        var l = this.state.data
+        for(var i=0;i<l.length;i++)
+        {
+            if(l[i]["medicine"].length===0 || l[i]["dosage"].length===0)
+            {
+                alert("some important information is missing")
+                return
+            }
         }
 
         console.log(obj)
@@ -268,21 +106,19 @@ export default class AddPrescription extends Component {
                     this.setState({
                         contact: '',
                         name:'',
-                        nameList:[],
-                        checkName:true,
                         doctor:'',
                         doctorList:[],
                         checkdoctor:true,
                         showdoctor:false,
                         showMedicine:false,
-                        medicine:'',
-                        dosage:'',
-                        timings:[],
-                        instructions:'',
-                        prescriptions : [],
+                        data:[],
+                        options:{},
+                        gotData:false,
+                        medicineList:[],
                         touched: {
                             contact: false,
-                        }
+                          }
+            
             
                     });
                 }
@@ -303,10 +139,69 @@ export default class AddPrescription extends Component {
       } 
 
 
-      actionsRow = ({ type, payload }) => {
+    actionsRow = ({ type, payload }) => {
         console.log(type);
         console.log(payload);
+        if(type==="delete")
+        {       
+            console.log("befor",this.state.data)
+            var list = this.state.data
+            for( var i = 0; i < list.length; i++){ 
+                
+                if ( list[i]["id"] === payload.id) { 
+                    list.splice(i, 1); 
+                }
+                this.setState({
+                data:list
+                })
+        
+            }
+            console.log("after",this.state.data)
+        }
+        else if(type==="save")
+        {
+            console.log("befor",this.state.data)
+            var list = this.state.data
+            for( var i = 0; i < list.length; i++){ 
+                
+                if ( list[i]["id"] == payload.id) { 
+                    list[i]["medicine"] = payload["medicine"]
+                    list[i]["dosage"] = payload["dosage"]
+                    list[i]["days"] = payload["days"]
+                    list[i]["morning"] = payload["morning"]
+                    list[i]["afternoon"] = payload["afternoon"]
+                    list[i]["evening"] = payload["evening"]
+                    list[i]["instructions"] = payload["instructions"]
+                }
+                this.setState({
+                data:list
+                })
+        
+            }
+            console.log("after",this.state.data)
+        
+        }
     };
+
+    addRow = ()=>{
+        console.log("add row")
+        var l = this.state.data
+        var d = {
+            id:id++,
+            medicine: '',
+            dosage:'',
+            days: 5,
+            morning: timings[0],
+            afternoon: timings[0],
+            evening: timings[0],
+            instructions: "",
+          }
+        l.push(d)
+        this.setState({
+            data:l
+        })
+    }
+
 
     updateoptions = ()=>
     {
@@ -333,6 +228,7 @@ export default class AddPrescription extends Component {
                     let n = value[i]["Drug Name"] + " " + value[i]["Strength"] + " " + value[i]["Form"]
                     list.push(n)
                 }
+                console.log(list)
 
                 this.setState({
                     medicineList: list,
@@ -341,8 +237,8 @@ export default class AddPrescription extends Component {
                         title: "prescription datatable",
                         dimensions: {
                           datatable: {
-                            width: "90%",
-                            height: "40%"
+                            width: "100%",
+                            height: "480px"
                           },
                           row: {
                             height: "48px"
@@ -353,12 +249,26 @@ export default class AddPrescription extends Component {
                         data: {
                           columns: [
                             {
-                              id: "name",
-                              label: "name",
-                              colSize: "100px",
+                                id: "id",
+                                label: "id",
+                                colSize: "150px",
+                                editable: false
+                            },
+                            {
+                              id: "medicine",
+                              label: "medicine",
+                              colSize: "150px",
                               editable: true,
                               inputType: "select",
-                              values: this.state.medicineList
+                              values: list
+                            },
+                            {
+                                id: "dosage",
+                                label: "dosage",
+                                colSize: "150px",
+                                editable: true,
+                                inputType: "input",
+                                dataType: "text"
                             },
                             {
                               id: "days",
@@ -380,35 +290,35 @@ export default class AddPrescription extends Component {
                               label: "morning",
                               colSize: "50px",
                               editable: true,
-                              dataType: "boolean",
-                              inputType: "checkbox"
+                              inputType: "select",
+                              values: timings
                             },
                             {
-                                id: "noon",
-                                label: "noon",
+                                id: "afternoon",
+                                label: "afternoon",
                                 colSize: "50px",
                                 editable: true,
-                                dataType: "boolean",
-                                inputType: "checkbox"
+                                inputType: "select",
+                                values: timings
                             },
                             {
                                 id: "evening",
                                 label: "evening",
                                 colSize: "50px",
                                 editable: true,
-                                dataType: "boolean",
-                                inputType: "checkbox"
+                                inputType: "select",
+                                values: timings
                             },
                             {
-                                id: "instruction",
-                                label: "instruction",
+                                id: "instructions",
+                                label: "instructions",
                                 colSize: "100px",
                                 editable: true,
                                 dataType: "text",
                                 inputType: "input"
                             }
                           ],
-                          rows: []
+                          rows: this.state.data
                         },
                         features: {
                           canEdit: true,
@@ -419,7 +329,7 @@ export default class AddPrescription extends Component {
                             {
                               title: "Add medicine",
                               icon: <AddIcon color="primary" />,
-                              onClick: () => alert("Add Medicine!")
+                              onClick: () => {this.addRow()}
                             }
                           ],
                         }
@@ -438,7 +348,7 @@ export default class AddPrescription extends Component {
 
     render() {
 
-        const errors = validate(this.state.contact);
+        const errors = validate(this.state.contact,this.state.name);
         const isDisabled = Object.keys(errors).some(x => errors[x]);
 
         
