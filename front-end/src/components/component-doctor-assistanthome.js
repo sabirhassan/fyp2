@@ -18,12 +18,12 @@ export default class DoctorAssistantHome extends Component {
                 </div>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
                     
-                    <Link to="/Doctor's Assistant HomePage" className="navbar-brand">Doctor's Assistant HomePage</Link>
+                    <h3 id="pageName" className="navbar-brand">Doctor Assistant HomePage</h3>
             
                     <div className="collpase navbar-collapse">
                         <ul className="navbar-nav mr-auto">
                             <li className="navbar-item">
-                            <Link to="/addpatient" className="nav-link">Enter Patient</Link>
+                            <Link to="/addpatient" id="addPatient" className="nav-link">Enter Patient</Link>
                             </li>
                             <li className="navbar-item">
                             <Link to="/addprescription" className="nav-link">Add Prescription</Link>

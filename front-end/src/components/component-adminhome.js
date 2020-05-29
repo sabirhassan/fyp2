@@ -18,7 +18,7 @@ export default class AdminHome extends Component {
                 </div>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
                     
-                    <Link to="/Admin HomePage" className="navbar-brand">Admin HomePage</Link>
+                    <h3 id= "pageName" className="navbar-brand">Admin HomePage</h3>
             
                     <div className="collpase navbar-collapse">
                         <ul className="navbar-nav mr-auto">

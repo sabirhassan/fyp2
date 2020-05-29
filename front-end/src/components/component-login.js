@@ -7,7 +7,6 @@ import DoctorHome from "./component-doctorhome";
 import DoctorAssistantHome from "./component-doctor-assistanthome";
 import LabStaffHome from "./component-labstaffhome";
 
-
 export default class Login extends Component {
 
     constructor(props) {
@@ -52,12 +51,12 @@ export default class Login extends Component {
             .then(res => {
                 console.log(res.data.name);
                 let type = res.data.type;
+                var User = res.data
+                
                 if(type==="admin")
                 {
                     localStorage.setItem("id",res.data.id);
-                    localStorage.setItem("type",type);
-                    localStorage.setItem("password",res.data.password);
-                    //console.log("OOOO YEAH");
+                    localStorage.setItem("email",res.data.email);
                     localStorage.setItem("name", res.data.name);
                     return(
                         ReactDOM.render(<AdminHome />, document.getElementById('root'))
@@ -65,19 +64,25 @@ export default class Login extends Component {
                 }
                 else if(type==="doctor")
                 {
+                    localStorage.setItem("id",res.data.id);
+                    localStorage.setItem("email",res.data.email);
                     localStorage.setItem("name", res.data.name);
+                    window.$email=res.data.email
                     ReactDOM.render(<DoctorHome />, document.getElementById('root'))
                 }
                 else if(type==="doctorAssistant")
                 {
+                    localStorage.setItem("id",res.data.id);
+                    localStorage.setItem("email",res.data.email);
                     localStorage.setItem("name", res.data.name);
-
+                    window.$email=res.data.email
                     ReactDOM.render(<DoctorAssistantHome />, document.getElementById('root'))
                 }
                 else if(type==="labStaff")
                 {
+                    localStorage.setItem("id",res.data.id);
+                    localStorage.setItem("email",res.data.email);
                     localStorage.setItem("name", res.data.name);
-
                     ReactDOM.render(<LabStaffHome />, document.getElementById('root'))
                 }
                 else if(type=="invalid")
@@ -102,6 +107,7 @@ export default class Login extends Component {
                                 placeholder = "Enter you email"
                                 value={this.state.Email}
                                 onChange={this.onChangeEmail}
+                                id="email"
                                 />
                     </div>
 
@@ -110,6 +116,7 @@ export default class Login extends Component {
                                 placeholder = "Enter your password"
                                 value={this.state.Password}
                                 onChange={this.onChangePassword}
+                                id="password"
                                 />
                     </div>
 

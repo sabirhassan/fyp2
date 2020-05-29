@@ -38,6 +38,7 @@ module.exports.getPrescription = function (req, res) {
 
 };*/
 
+/*
 module.exports.addPrescription = function(req,res){
     let ts = Date.now();
     let date_ob = new Date(ts);
@@ -80,28 +81,47 @@ module.exports.addPrescription = function(req,res){
 }
 
 
+*/
 
 
-
-/*module.exports.addPrescription = function(req,res){
+module.exports.addPrescription = function(req,res){
     console.log("Adding prescriptin");
-    prescription
-    db.collection('Prescriptions').add({
-        medicine : req.body.medicineName,
-        contact: req.body.patientContact,
-        doctor: req.body.doctor,
-        morning:req.body.morning,
-        afternoon:req.body.afternoon,
-        evening:req.body.evening,
-        notify:true,
-        status:true
-    }).then(ref => {
-        res.send("success");
-      })
-      .catch(err=>{
-          res.send("Error"+ err);
-      });
-}*/
+    let ts = Date.now();
+    let date_ob = new Date(ts);
+    let date = date_ob.getDate();
+    let month = date_ob.getMonth() + 1;
+    let year = date_ob.getFullYear();
+    // prints date & time in YYYY-MM-DD format
+    var d = year + "-" + month + "-" + date;
+
+    
+
+    let contact = req.body.contact
+    let doctor = req.body.doctor
+
+
+    for(let item of req.body.prescriptions)
+    {
+        db.collection('Prescriptions').add({
+            contact:contact,
+            doctor:doctor,
+            date:d,
+            medicine : item.medicine,
+            dosage : item.dosage,
+            days:item.days,
+            morning:item.morning,
+            afternoon:item.afternoon,
+            evening:item.evening,
+            instructions:item.instructions,
+            notify:true,
+            status:true
+        });
+    }
+
+    res.send("success");
+
+
+}
 
 
 module.exports.getPrescription = function(req,res){
@@ -113,9 +133,9 @@ module.exports.getPrescription = function(req,res){
     
     var pres = [];
 
-    let userRef = db.collection('prescription');
-    let query = userRef.where('contact', '==', contact).
-                where('name', '==', name).get()
+    let userRef = db.collection('Prescriptions');
+    let query = userRef.where('contact', '==', contact)
+    .get()
     .then(snapshot => {
         if (snapshot.empty) 
         {
@@ -126,7 +146,7 @@ module.exports.getPrescription = function(req,res){
             snapshot.forEach((doc) => {
                 pres.push(doc.data());
             });
-    
+            console.log(pres)
             res.send(pres);
         }  
     })

@@ -170,6 +170,7 @@ export default class AddPatient extends Component {
                                 pattern="[A-Za-z ]*" title="only valid alphabatic letters"
                                 onChange={this.onChangename}
                                 onBlur={this.handleBlur("name")}
+                                id="fullName"
                                 />
                                 {shouldMarkError("name") ?
                                 <div className="invalid-feedback">
@@ -186,6 +187,7 @@ export default class AddPatient extends Component {
                                 value={this.state.contact}
                                 onChange={this.onChangecontact}
                                 onBlur={this.handleBlur("contact")}
+                                id="contact"
                                 />
                                 {shouldMarkError("contact") ?
                                     <div className="invalid-feedback">
@@ -202,6 +204,7 @@ export default class AddPatient extends Component {
                                 value={this.state.password}
                                 onChange={this.onChangepassword}
                                 onBlur={this.handleBlur("password")}
+                                id="password"
                                 />
                                 {shouldMarkError("password") ?
                                 <div className="invalid-feedback">

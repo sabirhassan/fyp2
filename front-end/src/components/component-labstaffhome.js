@@ -4,7 +4,7 @@ export default class LabStaffHome extends Component {
     render() {
         return (
             <div>
-                <p>Welcome to LabStaffHome  Component!!</p>
+            <h3  id="pageName"  className="navbar-brand">Lab Staff HomePage</h3>
             </div>
         )
     }

@@ -100,3 +100,30 @@ function retrievePatient(req, res) {
 
     
 }
+
+module.exports.getPatientsList = function(req,res){
+    
+    console.log("getting Patient List");
+    var patients = [];
+
+    let Ref = db.collection('patient');
+    let query = Ref.get()
+    .then(snapshot => {
+        if (snapshot.empty) 
+        {
+            res.send("empty")
+        }
+        else
+        {
+            snapshot.forEach((doc) => {
+                let item = doc.data()
+                item['id']=doc.id
+                patients.push(item);
+            });
+            res.send(patients);
+        }  
+    })
+    .catch(err => {
+        console.log('Error getting documents', err);
+    });    
+}

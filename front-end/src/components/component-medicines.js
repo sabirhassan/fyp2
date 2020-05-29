@@ -373,19 +373,20 @@ export default class medicineList extends Component {
                 <Datatable
                 options={this.state.options}
                 actions={this.actionsRow}
+                id="medicineTable"
                 />
 
                 </div>
                 )
         }
-
+/*
         const createMedicineElement = () => {
 
           return(
             <div>
             <div className="popup">
               <div className="content">
-              <span className="close" onClick={this.togglePop}>
+              <span className="close"  onClick={this.togglePop}>
                 &times;
               </span>
               <form onSubmit={this.onSubmitModal}>
@@ -398,6 +399,7 @@ export default class medicineList extends Component {
                   required
                   value={this.state.name}
                   onChange={this.onChangename}
+                  id="medicineName"
                   />
 
                 <br />
@@ -408,6 +410,7 @@ export default class medicineList extends Component {
                 required
                 value={this.state.form}
                 onChange={this.onChangeform}
+                id="medicineForm"
                 />
 
                 <br />
@@ -418,6 +421,7 @@ export default class medicineList extends Component {
                 required
                 value={this.state.strength}
                 onChange={this.onChangestrength}
+                id="medicineStrength"
                 />
 
                 <br />
@@ -428,6 +432,7 @@ export default class medicineList extends Component {
                 required
                 value={this.state.ingredient}
                 onChange={this.onChangeingredient}
+                id="medicineIngrdient"
                 />
 
                 <br />
@@ -439,25 +444,86 @@ export default class medicineList extends Component {
 
           )
       }
-
+*/
 
         const Table = createTableElement();
 
-        const addMedicineElement = createMedicineElement();
+//        const addMedicineElement = createMedicineElement();
 
 
         return (
 
             <div className="base">
 
+              <div>
+              <button  id="newmedicine"  onClick={this.togglePop}>addMedicine</button>
+              <br></br>
+              </div>
 
-              <div className="table">
+              <div className="t">
               {Table}
               </div>
 
 
-              <div style={this.state.seen ? {display:'block'}:{display:'none'}}>
-              {addMedicineElement}
+
+
+              <div  style={this.state.seen ? {display:'block'}:{display:'none'}}>
+                  <div className="popup">
+                  <div className="content">
+                  <span className="close"  onClick={this.togglePop}>
+                    &times;
+                  </span>
+                  <form onSubmit={this.onSubmitModal}>
+                    <h3>Add Medicine Data!</h3>
+                    <br />  
+                    <input 
+                      type="text" 
+                      className="form-control"
+                      placeholder="Drug Name"
+                      required
+                      value={this.state.name}
+                      onChange={this.onChangename}
+                      id="medicineName"
+                      />
+
+                    <br />
+                    <input 
+                    type="text" 
+                    className="form-control"
+                    placeholder="Form"
+                    required
+                    value={this.state.form}
+                    onChange={this.onChangeform}
+                    id="medicineForm"
+                    />
+
+                    <br />
+                    <input 
+                    type="text" 
+                    className="form-control"
+                    placeholder="Strength"
+                    required
+                    value={this.state.strength}
+                    onChange={this.onChangestrength}
+                    id="medicineStrength"
+                    />
+
+                    <br />
+                    <input 
+                    type="text" 
+                    className="form-control"
+                    placeholder="Active Ingredient"
+                    required
+                    value={this.state.ingredient}
+                    onChange={this.onChangeingredient}
+                    id="medicineIngredient"
+                    />
+
+                    <br />
+                    <input type="submit" />
+                  </form>
+                </div>
+            </div>
               </div>
 
             </div>

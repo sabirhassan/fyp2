@@ -9,7 +9,9 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
+    "chromedriver": "^81.0.0",
     "email-validator": "^2.0.4",
+    "geckodriver": "^1.19.1",
     "multiselect-react-dropdown": "^1.4.7",
     "react": "^16.12.0",
     "react-bootstrap": "^1.0.0-beta.16",
@@ -19,7 +21,8 @@
     "react-multiselect-checkboxes": "^0.1.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
-    "react-switch": "^5.0.1"
+    "react-switch": "^5.0.1",
+    "selenium-webdriver": "^4.0.0-alpha.7"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -41,5 +44,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "mocha": "^7.1.2"
   }
 }

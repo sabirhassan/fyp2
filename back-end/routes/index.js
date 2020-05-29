@@ -6,6 +6,7 @@ const ctrl_resetPassword = require("../controller/resetPassword.js");
 const ctrl_registerPatient = require("../controller/addPatient.js");
 const ctrl_patientPrescription = require("../controller/prescription.js");
 const ctrl_medicine = require("../controller/medicine.js");
+const ctrl_requests = require("../controller/followupRequests");
 
 const router = express.Router();
 
@@ -40,7 +41,9 @@ router
     .route("/getpatients")
     .post(ctrl_registerPatient.getPatients)
 
-
+router
+    .route("/getpatientslist")
+    .post(ctrl_registerPatient.getPatientsList)
 
 router
     .route("/getPrescription")
@@ -65,5 +68,26 @@ router
 router
     .route("/updateMedicine")
     .post(ctrl_medicine.updateMedicine)    
+
+router
+    .route("/getrequests")
+    .post(ctrl_requests.getRequests)    
+
+router
+    .route("/acceptrequest")
+    .post(ctrl_requests.acceptRequest)    
+
+router
+    .route("/rejectrequest")
+    .post(ctrl_requests.rejectRequest)
+    
+router
+    .route("/getAppointments")
+    .post(ctrl_requests.getAppointments)
+
+router
+    .route("/cancelAppointment")
+    .post(ctrl_requests.cancelAppointment)
+
 
 module.exports = router;

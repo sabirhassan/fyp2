@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Multiselect } from 'multiselect-react-dropdown';
 import Table from 'react-bootstrap/Table'
 import axios from 'axios';
 
@@ -30,9 +29,6 @@ export default class SeePrescription extends Component {
 
         this.state = {
             contact: '',
-            name:'',
-            nameList:[],
-            checkName:true,
             prescription:[],
             checkPrescription:false,
             touched: {
@@ -40,27 +36,16 @@ export default class SeePrescription extends Component {
               }
             
         }
-        this.onChangecontact = this.onChangecontact.bind(this);
-        this.onChangename = this.onChangename.bind(this);
-     
+        this.onChangecontact = this.onChangecontact.bind(this);     
     }
     onChangecontact(e) {
         this.setState({
             contact: e.target.value,
-            nameList:[],
-            checkName:true,
-            checkPrescription:false,
+            checkPrescription:true,
             prescription:[]
         });
     }
 
-    onChangename(e) {
-        this.setState({
-            name: e.target.value,
-            prescription:[],
-            checkPrescription:true
-        });
-    }
 
 
      
@@ -83,96 +68,14 @@ export default class SeePrescription extends Component {
             return hasError ? shouldShow : false;
           };
     
-        const createNameElement = () => {
-
-            if(!Validatephone(this.state.contact))
-            {
-            
-            const user= {
-                contact:this.state.contact,
-            }
-
-            if(this.state.checkName)
-            {// to stop useless api calls
-                const promise1 = new Promise(function(resolve, reject) {
-                    
-                    axios.post('http://localhost:4000/getpatients', user)
-                    .then(res => {
-                        resolve(res.data)
-                    });
-                });
-                
-                promise1.then((value) =>{
-                    if(value!="empty")
-                    this.setState({
-                        nameList: value,
-                        name:value[0],
-                        checkName:false,
-                        checkPrescription:true,
-                    });
-                });
-                
-            }
-
-                if(this.state.nameList.length>0)
-                {
-                    return (
-                            <div>
-                            <label >Select Patient:</label>
-                                <br></br>
-                                <select value={this.state.name} onChange={this.onChangename}>
-                                {this.state.nameList.map((n) => <option value={n}>{n}</option>)}
-                                </select>
-                                
-                            </div>
-                            );            
-                }
-                else
-                {
-                    return(
-                    <div className="invalid-feedback">
-                            No patient exists with this contact.
-                    </div>
-                    );
-                }  
-
-            }
-            else
-            {
-                return (
-                    <div>
-                    </div>
-                    );
-            }
-        }          
-         
-        const createMedicineList = medicineList =>{
-            return medicineList.map((item, index) => {
-                const { medicine, dosage,days, morning,afternoon,evening, instructions } = item 
-                return (
- 
-                   <tr>
-                      <td >{medicine}</td>
-                      <td >dosage: {dosage}</td>
-                      <td >days: {days}</td>
-                      <td >{morning?"morning":""}</td>
-                      <td >{afternoon?"afternoon":""}</td>
-                      <td >{evening?"evening":""}</td>
-                      <td >{instructions}</td>
-                      
-                   </tr>
-                )
-             })
-        }
 
         const createTableElement = () => {
 
-            if(this.state.checkPrescription)
+            if(!Validatephone(this.state.contact) && this.state.checkPrescription)
             {
             
                 const user= {
                     contact:this.state.contact,
-                    name:this.state.name,
                 }
 
                 const promise1 = new Promise(function(resolve, reject) {
@@ -197,9 +100,10 @@ export default class SeePrescription extends Component {
             if(this.state.prescription.length>0)
             {
                 return this.state.prescription.map((item, index) => {
-                    const { contact, name,doctor, date, prescription } = item 
+                    const { contact,doctor, date, medicine, dosage,days, morning,afternoon,evening, instructions,status,notify  } = item 
                     return (
      
+                        <div>
                         <Table striped bordered hover >
                         <thead>
                             <tr>
@@ -209,18 +113,22 @@ export default class SeePrescription extends Component {
                         <tbody>
                         <tr>
                             <td >contact:{contact}</td>
-                            <td >patient:{name}</td>
                             <td >doctor:{doctor}</td>
                             <td >date:{date}</td>
-                        </tr>
-                        <tr>
-                            <td >Medicine List</td>
+                            <td >medicine:{medicine}</td>
+                            <td >dosage: {dosage}</td>
+                            <td >days: {days}</td>
+                            <td >{morning?"morning":""}</td>
+                            <td >{afternoon?"afternoon":""}</td>
+                            <td >{evening?"evening":""}</td>
+                            <td >instructions:{instructions}</td>
+                            <td >Current:{status?"True":"False"}</td>
+                            
                         </tr>
 
-                        {createMedicineList(prescription)}
-   
                         </tbody>
                         </Table>
+                        </div>
                     )
                  })            
             }
@@ -233,8 +141,7 @@ export default class SeePrescription extends Component {
             }
         }
 
-        const nameElement = createNameElement();
-
+     
         const tableElement = createTableElement() 
 
         return (
@@ -256,9 +163,6 @@ export default class SeePrescription extends Component {
 
                     </div>
 
-                <div>
-                {nameElement}
-                </div>
 
                 <div>
                 {tableElement}
