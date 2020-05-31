@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table'
 import '../css/medicine.css';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import AddPrescription from "./component-add-prescription";
-import SeePrescription from "./component-see-prescription";
+import SelectedPatientHome from './component-selected-patient-home';
 
 
 export default class PatientList extends Component {
@@ -13,28 +13,19 @@ export default class PatientList extends Component {
 
         this.state = {
             patientList:[],
-            checkRequests:true,
-            seen: false,     
-       
+            checkRequests:true,       
         }
 
         this.handleClick = this.handleClick.bind(this);
-        this.closePop = this.closePop.bind(this)
-
+       
     }
 
-    closePop = () => {
-        console.log("close popup")
-        this.setState({
-          seen: false
-        });
-      };
+
   
 
     handleClick(i, event) {
-        this.setState({
-            seen: true
-          });
+          localStorage.setItem("patient",JSON.stringify(this.state.patientList[i]));
+          ReactDOM.render(<SelectedPatientHome />, document.getElementById('root'))
     }
 
       render() {
@@ -89,7 +80,7 @@ export default class PatientList extends Component {
         const listItems =createlistItems()
 
         return (
-            <div className="base">
+            <div >
                 <div>
                     <h3>Patient List</h3>
                     <Table>
@@ -107,36 +98,7 @@ export default class PatientList extends Component {
 
                 </div>
 
-                <div  style={this.state.seen ? {display:'block'}:{display:'none'}}>
-                    <Router>                    
-                        <div className="popup">
-                            <div className="content">
-                                <span className="close"  onClick={this.closePop}>
-                                    &times;
-                                </span>
-                                
-                                <h3>Select Any Option!</h3>
-                                
-                                <br />  
 
-                                <ul>
-                                    <li >
-                                    <Link to="/seeprescription" className="nav-link">See Patient Prescription</Link>
-                                    </li>
-                                    <li >
-                                    <Link to="/addprescription" className="nav-link">Add Patient Prescription</Link>
-                                    </li>
-                                    
-                                </ul>
-
-                            </div>
-                        </div>
-                        <Route path="/seeprescription" component={SeePrescription} />
-                        <Route path="/addprescription" component={AddPrescription} />
-                    </Router>
-
-
-                </div>
 
             </div>
             

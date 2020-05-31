@@ -5,27 +5,7 @@ import axios from 'axios';
 import {Datatable} from "@o2xp/react-datatable";
 import AddIcon from '@material-ui/icons/Add';
 
-function Validatephone(contact) 
-{
-//    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    var phoneno = /^\+?([0-9]{12})\)?$/;
-    if(contact.match(phoneno))
-    {
-    return false;
-    }
-    else
-    {
-    return true;
-    }
-}
 
-function validate(contact,name) {
-    // true means invalid, so our conditions got reversed
-    return {
-       contact: Validatephone(contact),
-       name:name.length===0
-    };
-}
 
 var count = 0
 var timings=["true","false"]
@@ -37,34 +17,19 @@ export default class AddPrescription extends Component {
         super(props);
 
         this.state = {
-            contact: '',
-            name:'',
             doctor:'',
             doctorList:[],
             checkdoctor:true,
-            showdoctor:false,
             showMedicine:false,
             data:[],
             options:{},
             gotData:false,
             medicineList:[],
-            touched: {
-                contact: false,
-              }
             
         }
-        this.onChangecontact = this.onChangecontact.bind(this);
         this.onChangedoctor = this.onChangedoctor.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
      
-    }
-    onChangecontact(e) {
-        this.setState({
-            contact: e.target.value,
-            nameList:[],
-            checkName:true,
-            name:''
-        });
     }
 
     onChangedoctor(e) {
@@ -78,9 +43,11 @@ export default class AddPrescription extends Component {
     onSubmit(e) {
         e.preventDefault();
         
+        const object = JSON.parse( localStorage.getItem("patient"))
+
         const obj= {
-            contact: this.state.contact,
-            name:this.state.name,
+            contact: object.contact,
+            name: object.name,
             doctor:this.state.doctor,
             prescriptions : this.state.data
         }
@@ -104,8 +71,6 @@ export default class AddPrescription extends Component {
                 {
                     alert("prescription added Successfuly");
                     this.setState({
-                        contact: '',
-                        name:'',
                         doctor:'',
                         doctorList:[],
                         checkdoctor:true,
@@ -132,11 +97,7 @@ export default class AddPrescription extends Component {
     }
 
      
-    handleBlur = (field) => (evt) => {
-        this.setState({
-          touched: { ...this.state.touched, [field]: true },
-        });
-      } 
+     
 
 
     actionsRow = ({ type, payload }) => {
@@ -348,31 +309,13 @@ export default class AddPrescription extends Component {
 
     render() {
 
-        const errors = validate(this.state.contact,this.state.name);
-        const isDisabled = Object.keys(errors).some(x => errors[x]);
-
-        
-        const shouldMarkError = field => {
-            const hasError = errors[field];
-            const shouldShow = this.state.touched[field];      
-            return hasError ? shouldShow : false;
-          };
-    
-        const createNameElement = () => {
-
-            if(!Validatephone(this.state.contact))
-            {
-            
-
-            const user= {
-                contact:this.state.contact,
-            }
-
-            if(this.state.checkName)
+         
+        const createDoctorElement = () => {
+            if(this.state.checkdoctor)
             {// to stop useless api calls
                 const promise1 = new Promise(function(resolve, reject) {
                     
-                    axios.post('http://localhost:4000/getpatients', user)
+                    axios.post('http://localhost:4000/getdoctors')
                     .then(res => {
                         resolve(res.data)
                     });
@@ -381,105 +324,37 @@ export default class AddPrescription extends Component {
                 promise1.then((value) =>{
                     if(value!="empty")
                     this.setState({
-                        nameList: value,
-                        name:value[0],
-                        checkName:false,
-                        showdoctor:true,
-                        showMedicine:true
+                        doctorList: value,
+                        doctor:value[0],
+                        checkdoctor:false
                     });
                 });
                 
             }
 
-                if(this.state.nameList.length>0)
-                {
-                    return (
-                            <div>
-                            <label >Select Patient:</label>
-                                <br></br>
-                                <select value={this.state.name} onChange={this.onChangename}>
-                                {this.state.nameList.map((n) => <option value={n}>{n}</option>)}
-                                </select>
-                                
-                            </div>
-                            );            
-                }
-                else
-                {
-                    return(
-                    <div className="invalid-feedback">
-                            No patient exists with this contact.
-                    </div>
-                    );
-                }  
-
+            if(this.state.doctorList.length>0)
+            {
+                return (
+                        <div>
+                        <label >Select Reference Doctor:</label>
+                            <br></br>
+                            <select value={this.state.doctor} onChange={this.onChangedoctor}>
+                            {this.state.doctorList.map((n) => <option value={n}>{n}</option>)}
+                            </select>
+                            
+                        </div>
+                        );            
             }
             else
             {
-                return (
-                    <div>
-                    </div>
-                    );
-            }
-        }          
-         
-        const createDoctorElement = () => {
+                return(
+                <div>
+                </div>
+                );
+            }  
 
-            if(this.state.showdoctor)
-            {
-            
-
-                if(this.state.checkdoctor)
-                {// to stop useless api calls
-                    const promise1 = new Promise(function(resolve, reject) {
-                        
-                        axios.post('http://localhost:4000/getdoctors')
-                        .then(res => {
-                            resolve(res.data)
-                        });
-                    });
-                    
-                    promise1.then((value) =>{
-                        if(value!="empty")
-                        this.setState({
-                            doctorList: value,
-                            doctor:value[0],
-                            checkdoctor:false
-                        });
-                    });
-                    
-                }
-
-                if(this.state.doctorList.length>0)
-                {
-                    return (
-                            <div>
-                            <label >Select Reference Doctor:</label>
-                                <br></br>
-                                <select value={this.state.doctor} onChange={this.onChangedoctor}>
-                                {this.state.doctorList.map((n) => <option value={n}>{n}</option>)}
-                                </select>
-                                
-                            </div>
-                            );            
-                }
-                else
-                {
-                    return(
-                    <div>
-                    </div>
-                    );
-                }  
-
-            }
-            else
-            {
-                return (
-                    <div>
-                    </div>
-                    );
-            }
         }
+         
 
         const createTableElement = () => {
 
@@ -496,37 +371,14 @@ export default class AddPrescription extends Component {
             )
     }
 
-        const nameElement = createNameElement(this.state.contact);
         const doctorElement = createDoctorElement();
         const Table = createTableElement();
 
         return (
             <div className="form-group">
                 
-                    <div>
-                    <label>Contact: </label>
-                    <input 
-                            type="text" 
-                            className={shouldMarkError("contact") ? "form-control is-invalid" : "form-control"}
-                            value={this.state.contact}
-                            onChange={this.onChangecontact}
-                            onBlur={this.handleBlur("contact")}
-                            />
-                            {shouldMarkError("contact") ?
-                                <div className="invalid-feedback">
-                                    Please provide a valid contact like +921112223456.
-                                </div>
-                            :""}
 
-                    </div>
-
-
-                <div>
-                {nameElement}
-                </div>
                 
-                <br></br>
-
                 <div>
                 {doctorElement}
                 </div>
@@ -538,7 +390,7 @@ export default class AddPrescription extends Component {
 
 
                 <div className="form-group">
-                    <input type="submit" disabled={isDisabled} style={{marginTop:10}} value="Add prescription" onClick={this.onSubmit} className="btn-primary" />
+                    <input type="submit"  style={{marginTop:10}} value="Add prescription" onClick={this.onSubmit} className="btn-primary" />
                 </div>
 
 
