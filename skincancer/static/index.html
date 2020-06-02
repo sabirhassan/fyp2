@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<title>Skin Lesion Analyzer</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" 
+		integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" 
+		crossorigin="anonymous">
+
+	<link rel="stylesheet" href="./css/skin.css">
+
+	<!--Code to prevent the browser from caching the page-->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+
+
+</head>
+
+
+<body >
+
+		<div class="container mt-5" >
+			<div class="row">
+				<div class="col-12">
+					<div class="progress progress-bar progress-bar-striped progress-bar-animated mb-2">
+						Loading Model
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="row">
+				<div class="col-6">
+					<input id="image-selector" class="form-control border-0" type="file" accept="image/png, .jpeg, .jpg">
+				</div>
+			</div>
+			<hr>
+
+			<div class="row">
+				<div class="col-12">
+					<h2 class="ml-3">Image</h2>
+					<img id="selected-image">
+				</div>
+
+			</div>
+			<hr>
+
+			<div class="row">
+				<div class="col ml-3">
+					<button id="predict-button">Predict</button>
+				</div>
+			</div>
+			<hr>
+
+			<div class="row">
+				<div class="col">
+					<h2 class="ml-3">Predictions</h2>
+					<ol id="prediction-list"></ol>
+				</div>
+			</div>
+			<hr>
+
+			<div class="row" id="dropdown" style="visibility: hidden;">
+				<div class="col-12">
+					<h2 class="ml-3">Select Patient</h2>
+					<select id="patients" name="cars" class="ml-3">
+
+					  </select>
+				</div>
+
+			</div>
+
+			<div class="row">
+				<div class="col ml-3">
+					<button id="save-button" style="visibility: hidden;">Save</button>
+				</div>
+			</div>
+
+
+
+		</div>
+	
+	<!-- Load jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+
+	</script>
+	
+	
+	<!-- Load TensorFlow.js
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.6.0/dist/tf.min.js"> 
+	</script>-->
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.13.3/dist/tf.min.js"> 
+	</script>
+	
+	
+	<!-- Load the js files -->
+	<script src="skin_classes.js"></script>
+	<script src="predict.js"></script>
+
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+</body>
+</html>
+

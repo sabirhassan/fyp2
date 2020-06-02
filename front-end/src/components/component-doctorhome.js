@@ -1,16 +1,26 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import PredictSkinCancer from "./component-predict-skin-cancer";
-import SeePrescription from "./component-see-prescription";
+
 import medicineList from "./component-medicines";
 import followups from "./component-doctor-follow-up-requests";
 import DoctorAppointments from "./component-doctor-appointments";
 import patientList from "./component-doctor-patient-list";
 
 export default class DoctorHome extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.ClickSkinCancer = this.ClickSkinCancer.bind(this);
+       
+    }
+
+    ClickSkinCancer(i, event) {
+        window.open("http://localhost:5000/")
+  }
+
     render() {
         return (
             <Router>
@@ -25,10 +35,7 @@ export default class DoctorHome extends Component {
                     <div className="collpase navbar-collapse">
                         <ul className="navbar-nav mr-auto">
                             <li className="navbar-item">
-                            <Link to="/predictskincancer" className="nav-link">Skin Cancer</Link>
-                            </li>
-                            <li className="navbar-item">
-                            <Link to="/seeprescription" className="nav-link">See Patient Prescription</Link>
+                            <Link className="nav-link"  onClick={this.ClickSkinCancer}>Skin Cancer</Link>
                             </li>
                             <li className="navbar-item">
                             <Link to="/medicineList" id="medicine" className="nav-link">Medicines</Link>
@@ -47,8 +54,6 @@ export default class DoctorHome extends Component {
                     </div>
                         
                 </nav>
-                <Route path="/predictskincancer" component={PredictSkinCancer} />
-                <Route path="/seeprescription" component={SeePrescription} />
                 <Route path="/medicineList" component={medicineList} />
                 <Route path="/followups" component={followups} />
                 <Route path="/appointments" component={DoctorAppointments} />

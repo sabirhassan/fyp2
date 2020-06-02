@@ -21,8 +21,6 @@ export default class PatientList extends Component {
     }
 
 
-  
-
     handleClick(i, event) {
           localStorage.setItem("patient",JSON.stringify(this.state.patientList[i]));
           ReactDOM.render(<SelectedPatientHome />, document.getElementById('root'))
@@ -97,8 +95,6 @@ export default class PatientList extends Component {
                     </Table>
 
                 </div>
-
-
 
             </div>
             

@@ -1,13 +1,27 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-
+import ReactDOM from 'react-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import SeePrescription from "./component-see-prescription";
 import AddPrescription from "./component-add-prescription";
+import DoctorHome from "./component-doctorhome"
 
 
 export default class SelectedPatientHome extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.ClickHome = this.ClickHome.bind(this);
+       
+    }
+
+    ClickHome(i, event) {
+        ReactDOM.render(<DoctorHome />, document.getElementById('root'))
+  }
+
+
     render() {
 
         const obj = JSON.parse( localStorage.getItem("patient"))
@@ -30,6 +44,9 @@ export default class SelectedPatientHome extends Component {
                             </li>
                             <li className="navbar-item">
                             <Link to="/Addprescription" className="nav-link">Add Patient Prescription</Link>
+                            </li>
+                            <li className="navbar-item">
+                            <Link className="nav-link" onClick={this.ClickHome}>Home</Link>
                             </li>
             
                         </ul>
