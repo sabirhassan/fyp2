@@ -30,7 +30,7 @@ $("#image-selector").change(function () {
 let model;
 (async function () {
 	
-	model = await tf.loadModel('http://localhost:5000/tfjs-models/model/model.json');
+	model = await tf.loadModel('http://localhost:8000/tfjs-models/model/model.json');
 
     $('.progress-bar').hide();
 		

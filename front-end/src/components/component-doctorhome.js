@@ -18,7 +18,7 @@ export default class DoctorHome extends Component {
     }
 
     ClickSkinCancer(i, event) {
-        window.open("http://localhost:5000/")
+        window.open("http://localhost:8000/")
   }
 
     render() {

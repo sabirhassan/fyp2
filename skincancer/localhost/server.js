@@ -5,6 +5,6 @@ let app= express();
 app.use(express.static("../static"));
 
 
-app.listen(5000, function(){
-    console.log('serving static at 5000')
+app.listen(8000, function(){
+    console.log('serving static at 8000')
 });
