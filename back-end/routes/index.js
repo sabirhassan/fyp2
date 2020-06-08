@@ -7,7 +7,7 @@ const ctrl_registerPatient = require("../controller/addPatient.js");
 const ctrl_patientPrescription = require("../controller/prescription.js");
 const ctrl_medicine = require("../controller/medicine.js");
 const ctrl_requests = require("../controller/followupRequests");
-
+const ctrl_reports = require("../controller/reports");
 const router = express.Router();
 
 router
@@ -89,5 +89,16 @@ router
     .route("/cancelAppointment")
     .post(ctrl_requests.cancelAppointment)
 
+router
+    .route("/insertSkinCancerReport")
+    .post(ctrl_reports.addSkinCancerReport)    
+
+router
+    .route("/addratinopathyreport")
+    .post(ctrl_reports.addratinopathyReport)    
+
+router
+    .route("/getReports")
+    .post(ctrl_reports.getReports)    
 
 module.exports = router;

@@ -5,6 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import SeePrescription from "./component-see-prescription";
 import AddPrescription from "./component-add-prescription";
+import reportList from "./component-report";
 import DoctorHome from "./component-doctorhome"
 
 
@@ -46,6 +47,9 @@ export default class SelectedPatientHome extends Component {
                             <Link to="/Addprescription" className="nav-link">Add Patient Prescription</Link>
                             </li>
                             <li className="navbar-item">
+                            <Link to="/getReports" className="nav-link">Reports</Link>
+                            </li>
+                            <li className="navbar-item">
                             <Link className="nav-link" onClick={this.ClickHome}>Home</Link>
                             </li>
             
@@ -55,6 +59,7 @@ export default class SelectedPatientHome extends Component {
                 </nav>
                 <Route path="/seeprescription" component={SeePrescription} />
                 <Route path="/Addprescription" component={AddPrescription} />
+                <Route path="/getReports" component={reportList} />
             </div>
             </Router>
         )

@@ -1,14 +1,12 @@
-//import { Button } from 'reactstrap';
-//import React from 'react';
+
+//const ScriptTag = require ('react-script-tag');
+
 const Button = window.Reactstrap.Button;
 
 
 
 const Navbar = window.Reactstrap.Navbar;
 const NavbarBrand = window.Reactstrap.NavbarBrand;
-const Nav = window.Reactstrap.Nav;
-const NavItem = window.Reactstrap.NavItem;
-const NavLink = window.Reactstrap.NavLink;
 
 
 const Router = window.ReactRouterDOM.BrowserRouter;
@@ -21,50 +19,30 @@ const Label = window.Reactstrap.Label;
 const Input = window.Reactstrap.Input;
 
 
-const UncontrolledDropdown = window.Reactstrap.UncontrolledDropdown;
-const Dropdown = window.Reactstrap.Dropdown;
-const DropdownToggle = window.Reactstrap.DropdownToggle;
-const DropdownMenu = window.Reactstrap.DropdownMenu;
-const DropdownItem = window.Reactstrap.DropdownItem;
 const Spinner = window.Reactstrap.Spinner;
 
+//import axios from 'axios';
 
 
 const axios = window.axios;
 
-const Select = window.Select;
-
-
-//import { Button } from 'reactstrap';
 
 // Obtain the root 
 const rootElement = document.getElementById('root');
 
 
-class About extends React.Component {
-    //
-
-// Use the render function to return JSX component
-    render() {
-        return (
-
-            <div>
-                <h1>About</h1>
-                <ReactMarkdown source={window.APP_CONFIG.about}/>
-            </div>
-        );
-    }
-}
-
 
 // Create a ES6 class component
-class MainPage extends React.Component {
-    //
+class MainPage extends React.Component 
+{
+
 
     constructor(props) {
         super(props);
         this.state = {
-            file: null,
+            rawFile:'',
+            file: '',
+            base64:'',
             predictions:[],
             patients:[],
             checkpatients:true,
@@ -77,14 +55,55 @@ class MainPage extends React.Component {
         this.renderSaveButton = this.renderSaveButton.bind(this);
         this.onChangecontact = this.onChangecontact.bind(this);
         this.save = this.save.bind(this);
+        this._onFileUpload = this._onFileUpload.bind(this);
+
 
 
     }
 
-    save(e) {
-        alert("save button clicked!");
-    }
 
+    save(e){
+        e.preventDefault();
+        var contact = this.state.contact;
+        var prediction = "";
+        const predictions = this.state.predictions || [];
+
+        if (predictions.length == 0) {
+            alert("no data to insert")
+            return
+
+        }
+        for(let i =0; i< predictions.length;i++)
+        {
+            prediction = prediction + predictions[i].class +" "+ predictions[i].prob +", "
+        }
+
+        var obj = {"contact":contact,"prediction":prediction,"image":this.state.base64,"model": "diabetic ratinopathy"};
+        console.log(obj)
+        
+        const promise1 = new Promise(function(resolve, reject) {
+                    
+            axios.post('http://localhost:4000/addratinopathyreport', obj)
+            .then(res => {
+                resolve(res.data)
+            });
+        });
+        
+        promise1.then((value) =>{
+            console.log(value);
+            if(value == "success")
+            {
+                this.setState({
+                    predictions:'',
+                })
+
+                alert("Report Added Successfully!")
+            }
+            else
+                alert(value)
+        });
+        
+    }    
 
     onChangecontact(e) {
         this.setState({
@@ -92,13 +111,21 @@ class MainPage extends React.Component {
         });
     }
 
-    _onFileUpload = (event) => {
-        this.setState({
-            rawFile: event.target.files[0],
-            file: URL.createObjectURL(event.target.files[0]),
+    _onFileUpload(e) {
+
+        let file = e.target.files[0];
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+          this.setState({
+            file:  URL.createObjectURL(file),
+            rawFile:file,
+            base64: reader.result,
             imageSelected: true
-        })
-    };
+          });
+
+        };
+      }
 
 
 
@@ -130,7 +157,8 @@ class MainPage extends React.Component {
     };
 
 
-    renderPrediction() {
+    renderPrediction() 
+    {
         const predictions = this.state.predictions || [];
 
         if (predictions.length > 0) {
@@ -141,17 +169,18 @@ class MainPage extends React.Component {
 
 
             return (
-                <ul>
+                <ul id="prediction-list">
                     {predictionItems}
                 </ul>
-            )
+            );
 
         } else {
-            return null
+            return null;
         }
     }
 
-    createSelectItems() {
+    createSelectItems() 
+    {
         let items = [];
         let values = this.state.patients;                             
         for (let i = 0; i < values.length; i++) {
@@ -163,10 +192,10 @@ class MainPage extends React.Component {
         return items;
     }  
 
-    renderSaveButton() {
+    renderSaveButton() 
+    {
         
 
-        
         if(this.state.checkpatients)
         {
 
@@ -198,7 +227,7 @@ class MainPage extends React.Component {
                 <div>
                     <div>
                         <label >Select Patient:</label>
-                        <select value={this.state.contact} onChange={this.onChangecontact}>
+                        <select value={this.state.contact} id = "patients" onChange={this.onChangecontact}>
                             {this.createSelectItems()}
                         </select>
                         
@@ -206,7 +235,7 @@ class MainPage extends React.Component {
 
 
                     <div className="form-group" style={{marginTop:10}}>
-                        <input type="submit" onClick={this.save}  value="Save report" className="btn-primary" />
+                        <input type="submit" id="save-button" onClick={this.save} value="Save report" className="btn-primary" />
                     </div>                
                 </div>
             )
@@ -220,7 +249,8 @@ class MainPage extends React.Component {
 
 
 
-    render() {
+    render() 
+    {
 
         return (
             <div>
@@ -243,7 +273,7 @@ class MainPage extends React.Component {
                         </Label>
                     </FormGroup>
 
-                    <img src={this.state.file} className={"img-preview"} hidden={!this.state.imageSelected}/>
+                    <img src={this.state.file} id="selected-image" className={"img-preview"} hidden={!this.state.imageSelected}/>
 
                     <FormGroup>
                         <Button color="success" 
@@ -269,7 +299,7 @@ class MainPage extends React.Component {
                 {this.renderSaveButton()}
 
                 </Form>
-
+                
             </div>
         );
     }

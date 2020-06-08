@@ -14,12 +14,17 @@ export default class DoctorHome extends Component {
         super(props);
 
         this.ClickSkinCancer = this.ClickSkinCancer.bind(this);
+        this.ClickRatinopathy = this.ClickRatinopathy.bind(this);
        
     }
 
     ClickSkinCancer(i, event) {
-        window.open("http://localhost:8000/")
-  }
+        window.open("http://localhost:5001/")
+    }
+
+    ClickRatinopathy(i, event) {
+        window.open("http://localhost:5000/")
+    }
 
     render() {
         return (
@@ -36,6 +41,9 @@ export default class DoctorHome extends Component {
                         <ul className="navbar-nav mr-auto">
                             <li className="navbar-item">
                             <Link className="nav-link"  onClick={this.ClickSkinCancer}>Skin Cancer</Link>
+                            </li>
+                            <li className="navbar-item">
+                            <Link className="nav-link"  onClick={this.ClickRatinopathy}>Diabetic Ratinopathy</Link>
                             </li>
                             <li className="navbar-item">
                             <Link to="/medicineList" id="medicine" className="nav-link">Medicines</Link>

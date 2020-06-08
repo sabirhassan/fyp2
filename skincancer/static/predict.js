@@ -30,7 +30,7 @@ $("#image-selector").change(function () {
 let model;
 (async function () {
 	
-	model = await tf.loadModel('http://localhost:8000/tfjs-models/model/model.json');
+	model = await tf.loadModel('http://localhost:5001/tfjs-models/model/model.json');
 
     $('.progress-bar').hide();
 		
@@ -114,12 +114,5 @@ $("#predict-button").click(async function () {
 	});
 
 
-
-});
-
-$("#save-button").click(async function () {
-	
-
-alert("sav butto clicked");
 
 });

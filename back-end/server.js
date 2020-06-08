@@ -26,7 +26,7 @@ app.use(cors());
 app.use(express.static('public')); //Serves resources from public folder
 app.use(session({secret: 'ssshhhhh'}));
 
-app.use(myParser.json());
+app.use(myParser.json({limit: '50mb'}));
 
 app.use("/", routes);
 
