@@ -144,8 +144,8 @@ export default class reportList extends Component {
                 </div>
 
                 <div  style={this.state.seen ? {display:'block'}:{display:'none'}}>
-                    <div className="popup">
-                        <div className="content">
+                    <div className="popup1">
+                        <div >
                             <span className="close"  onClick={this.closePop}>
                             &times;
                             </span>
