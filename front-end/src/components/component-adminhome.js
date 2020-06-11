@@ -3,12 +3,39 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import '../css/home.css'
+import axios from 'axios';
 
 import Register from "./component-register-user";
 import changePassword from "./component-change-password";
 import resetPassword from "./component-reset-password";
 
 export default class AdminHome extends Component {
+
+    handleclick(i, event) {
+        const promise1 = new Promise(function(resolve, reject) {
+            axios.get('http://localhost:4000/updatePrescriptionStatus')
+            .then(res => {
+                resolve(res.data)
+            });
+        });
+        
+        promise1.then((value) =>{
+            if(value == "empty")
+            {
+                alert("nothing to Update");
+            }
+            else if(value == "Success")
+            {
+                alert("Status Updated")
+            }
+            else{
+                alert(value);
+            }
+
+
+        });
+    }
+
     render() {
         return (
             <Router>
@@ -30,6 +57,9 @@ export default class AdminHome extends Component {
                             </li>
                             <li className="navbar-item">
                             <Link to="/changepassword" className="nav-link">Change own Password</Link>
+                            </li>
+                            <li className="navbar-item">
+                            <Link className="nav-link" onClick={this.handleclick}>Update Prescription Status</Link>
                             </li>
                         </ul>
                     </div>

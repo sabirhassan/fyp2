@@ -252,7 +252,7 @@ export default class Register extends Component {
                   </div>
                   <br></br>
                     <div className="form-group">
-                        <input type="submit" disabled={isDisabled} value="Create User" className="btn btn-primary" />
+                        <input type="submit" disabled={isDisabled} value="Create User" className="btn-primary" />
                     </div>
                 </form>
 

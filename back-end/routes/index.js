@@ -101,4 +101,7 @@ router
     .route("/getReports")
     .post(ctrl_reports.getReports)    
 
+router
+    .route("/updatePrescriptionStatus")
+    .get(ctrl_patientPrescription.updateStatus)
 module.exports = router;

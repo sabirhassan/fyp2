@@ -186,3 +186,66 @@ module.exports.getPrescription = function(req,res){
         console.log('Error getting documents', err);
     });    
 }
+
+module.exports.updateStatus = function(req,res){
+    
+    console.log("getting Prescription List");
+    var prescritions = [];
+
+    let Ref = db.collection('Prescriptions');
+    let query = Ref.where('status', '==', true).get()
+    .then(snapshot => {
+        if (snapshot.empty) 
+        {
+            res.send("empty")
+        }
+        else
+        {
+            snapshot.forEach((doc) => {
+                let item = doc.data()
+                item['id']=doc.id
+                prescritions.push(item);
+                //Updating the status
+                if(calculateSrarus(item['date'],item['days'])){
+
+                    let pQuery = db.collection('Prescriptions').doc(item['id']);
+                    pQuery.update({
+                        status:false,
+                    }).
+                    then(()=>{
+                        console.log("updated status")
+                    })
+                    .catch(err => {
+                        console.log('Error updating documents', err);
+                    });  
+
+                }
+            });
+            //console.log(prescritions);
+            res.send("Success");
+        }  
+    })
+    .catch(err => {
+        console.log('Error getting documents', err);
+    });    
+}
+
+function calculateSrarus(recievedDate,days){
+    const oneDay = 24 * 60 * 60 * 1000;
+    let ts = Date.now();
+    let currentDate = new Date(ts);
+
+    var parsed = recievedDate.split('-');
+    var mon = parseInt(parsed[1])-1;
+
+    var presDate = new Date(parsed[0],mon , parsed[2]);
+    console.log(currentDate+"_----------" + presDate);
+
+    var diff = Math.floor((( currentDate - presDate ) / oneDay));
+    if(diff>days){
+        return true //Change the status time expired
+    }
+    else{
+        return false // Donot change status days left
+    }
+}
