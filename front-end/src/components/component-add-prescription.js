@@ -53,6 +53,13 @@ export default class AddPrescription extends Component {
         }
 
         var l = this.state.data
+
+        if(l.length == 0)
+        {
+            alert("No medicine added yet!")
+            return
+        }
+
         for(var i=0;i<l.length;i++)
         {
             if(l[i]["medicine"].length===0 || l[i]["dosage"].length===0)

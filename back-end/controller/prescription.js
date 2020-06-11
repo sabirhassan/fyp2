@@ -102,6 +102,38 @@ module.exports.addPrescription = function(req,res){
 
     for(let item of req.body.prescriptions)
     {
+
+        let morning = item.morning;
+        let afternoon = item.afternoon;
+        let evening = item.evening;
+        if(morning === "true")
+        {
+            morning = true;
+        }
+        else
+        {
+            morning = false;
+        }
+        if(afternoon === "true")
+        {
+            afternoon = true;
+        }
+        else
+        {
+            afternoon = false;
+        }
+        if(evening === "true")
+        {
+            evening = true;
+        }
+        else
+        {
+            evening = false;
+        }
+
+
+
+
         db.collection('Prescriptions').add({
             contact:contact,
             doctor:doctor,
@@ -109,9 +141,9 @@ module.exports.addPrescription = function(req,res){
             medicine : item.medicine,
             dosage : item.dosage,
             days:item.days,
-            morning:item.morning,
-            afternoon:item.afternoon,
-            evening:item.evening,
+            morning:morning,
+            afternoon:afternoon,
+            evening:evening,
             instructions:item.instructions,
             notify:true,
             status:true

@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 
 import medicineList from "./component-medicines";
+import AddPatient from "./component-add-patient";
 import followups from "./component-doctor-follow-up-requests";
 import DoctorAppointments from "./component-doctor-appointments";
 import patientList from "./component-doctor-patient-list";
@@ -46,6 +47,9 @@ export default class DoctorHome extends Component {
                             <Link className="nav-link"  onClick={this.ClickRatinopathy}>Diabetic Ratinopathy</Link>
                             </li>
                             <li className="navbar-item">
+                            <Link to="/addpatient" id="addPatient" className="nav-link">Enter Patient</Link>
+                            </li>
+                            <li className="navbar-item">
                             <Link to="/medicineList" id="medicine" className="nav-link">Medicines</Link>
                             </li>
                             <li className="navbar-item">
@@ -64,6 +68,7 @@ export default class DoctorHome extends Component {
                 </nav>
                 <Route path="/medicineList" component={medicineList} />
                 <Route path="/followups" component={followups} />
+                <Route path="/addpatient" component={AddPatient} />
                 <Route path="/appointments" component={DoctorAppointments} />
                 <Route path="/patientlist" component={patientList} />
             </div>
